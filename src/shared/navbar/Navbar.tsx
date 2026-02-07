@@ -1,0 +1,203 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { Menu } from "lucide-react";
+import { Drawer } from "antd";
+import alphaLogo from "@/assets/alpha-logo.png";
+
+const navLinks = [
+  { name: "Home", path: "/" },
+  { name: "About", path: "/about" },
+  { name: "Membership", path: "/membership-application" },
+  { name: "Partners", path: "/partners" },
+  { name: "Sponsors", path: "/sponsors" },
+  { name: "Contact", path: "/contact" },
+];
+
+const Navbar = () => {
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <header className="bg-[#0c1223] sticky top-0 z-50">
+      <div className="container-main max-w-[1400px] mx-auto">
+        <div className="flex items-center justify-between justify-space-around gap-12 py-4 px-4 sm:px-12 md:px-16 xl:px-14">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-md bg-amber flex items-center justify-center overflow-hidden">
+              <Image
+                src={alphaLogo}
+                alt="ALPHA Logo"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold text-white tracking-wide">
+                ALPHA
+              </span>
+              <span className="text-xs text-amber tracking-wider hidden xl:block">
+                Automotive Leaders and Professionals Hub Association
+              </span>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-6">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                href={link.path}
+                className={`nav-link relative transition-colors duration-300 group`}
+              >
+                {link.name}
+                <span
+                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-amber transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out ${
+                    pathname === link.path && link.path !== "/"
+                      ? "scale-x-100"
+                      : ""
+                  }`}
+                ></span>
+              </Link>
+            ))}
+          </nav>
+
+          {/* Auth Buttons */}
+          <div className="hidden sm:flex items-center gap-3">
+            <Link
+              href="/partner-login"
+              className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-transparent px-4 py-3 text-sm font-medium text-[#D7A859] group"
+            >
+              {/* Sliding background */}
+              <span className="absolute inset-0 bg-[#D7A859] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
+
+              {/* Text */}
+              <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
+                Membership Login
+              </span>
+            </Link>
+            <Link
+              href="/partner-login"
+              className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-[#D7A859] px-4 py-3 text-sm font-medium text-[#050507] group"
+            >
+              {/* Sliding background */}
+              <span className="absolute inset-0 bg-[#0c1223] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
+
+              {/* Text */}
+              <span className="relative z-10 text-[#050507] transition-colors duration-300 group-hover:text-[#D7A859]">
+                Apply Here
+              </span>
+            </Link>
+          </div>
+
+          {/* <div className="hidden sm:flex items-center gap-3">
+            <Link
+              href="/member-signin"
+              className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-amber px-4 py-2 text-sm font-medium text-amber group"
+            >
+              <span className="absolute inset-0 bg-amber scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
+
+              <span className="relative z-10 transition-colors duration-300 group-hover:text-[#050507]">
+                Member Sign In
+              </span>
+
+              <User className="w-4 h-4 relative z-10 transition-colors duration-300 group-hover:text-[#050507]" />
+            </Link>
+
+            <Link
+              href="/partner-login"
+              className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-amber px-4 py-2 text-sm font-medium text-amber group"
+            >
+              <span className="absolute inset-0 bg-amber scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
+
+              <span className="relative z-10 transition-colors duration-300 group-hover:text-[#050507]">
+                Partner Login
+              </span>
+
+              <Users className="w-4 h-4 relative z-10 transition-colors duration-300 group-hover:text-[#050507]" />
+            </Link>
+          </div> */}
+
+          <button
+            className="md:hidden text-amber cursor-pointer"
+            onClick={() => setIsOpen(true)}
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+
+          <Drawer
+            title={
+              <div className="flex items-center gap-3">
+                <span className="text-lg font-bold text-white tracking-wide">
+                  ALPHA
+                </span>
+                <div className="w-8 h-8 rounded-md bg-amber flex items-center justify-center overflow-hidden">
+                  <Image
+                    src={alphaLogo}
+                    alt="ALPHA Logo"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            }
+            placement="right"
+            onClose={() => setIsOpen(false)}
+            open={isOpen}
+            closeIcon={<span className="text-white">✕</span>}
+            styles={{
+              header: {
+                backgroundColor: "#0c1223",
+                borderBottom: "1px solid #D7A859",
+                color: "white",
+              },
+              body: { backgroundColor: "#0c1223", color: "white" },
+              mask: { backgroundColor: "rgba(0, 0, 0, 0.7)" },
+            }}
+          >
+            <div className="flex flex-col gap-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  href={link.path}
+                  className={`text-base font-medium transition-colors duration-300 ${
+                    pathname === link.path ? "text-[#D7A859]" : "text-white"
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+
+              <div className="mt-4 flex flex-col gap-3">
+                <Link
+                  href="/partner-login"
+                  className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-transparent px-4 py-3 text-sm font-medium text-[#D7A859] group"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <span className="absolute inset-0 bg-[#D7A859] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
+                  <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
+                    Membership Login
+                  </span>
+                </Link>
+                <Link
+                  href="/partner-login"
+                  className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-transparent px-4 py-3 text-sm font-medium text-[#D7A859] group"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <span className="absolute inset-0 bg-[#D7A859] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
+                  <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
+                   Apply Here
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </Drawer>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Navbar;
