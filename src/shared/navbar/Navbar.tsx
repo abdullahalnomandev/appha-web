@@ -6,7 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { Button, Drawer } from "antd";
-import alphaLogo from "@/assets/alpha-logo.png";
+import alpha from "@/assets/image 2.png";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -29,17 +29,14 @@ const Navbar = () => {
           <Link href="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-md bg-amber flex items-center justify-center overflow-hidden">
               <Image
-                src={alphaLogo}
+                src={alpha}
                 alt="ALPHA Logo"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain bg-[#0c1223]"
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-lg font-bold text-white tracking-wide">
-                ALPHA
-              </span>
               <span className="text-xs text-amber tracking-wider hidden xl:block">
-                Automotive Leaders and Professionals Hub Association
+                Automotive Leaders and<br />Professionals Hub Association
               </span>
             </div>
           </Link>
@@ -131,14 +128,11 @@ const Navbar = () => {
             title={
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-lg font-bold text-white tracking-wide">
-                    ALPHA
-                  </span>
                   <div className="w-8 h-8 rounded-md bg-amber flex items-center justify-center overflow-hidden">
                     <Image
-                      src={alphaLogo}
+                      src={alpha}
                       alt="ALPHA Logo"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain bg-[#0c1223]"
                     />
                   </div>
                 </div>

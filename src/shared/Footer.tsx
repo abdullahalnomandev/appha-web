@@ -48,7 +48,7 @@ const Footer = () => {
                 <li>
                   <Link
                     href="/about"
-                    className="text-base leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
+                    className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
                     About Us
                   </Link>
@@ -56,7 +56,7 @@ const Footer = () => {
                 <li>
                   <Link
                     href="/membership"
-                    className="text-base leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
+                    className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
                     Become a Member
                   </Link>
@@ -64,7 +64,7 @@ const Footer = () => {
                 <li>
                   <Link
                     href="/partners"
-                    className="text-base leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
+                    className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
                     Partner with Us
                   </Link>
@@ -72,7 +72,7 @@ const Footer = () => {
                 <li>
                   <Link
                     href="/sponsors"
-                    className="text-base leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
+                    className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
                     Our Sponsor
                   </Link>
@@ -80,7 +80,7 @@ const Footer = () => {
                 <li>
                   <Link
                     href="/contact"
-                    className="text-base leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
+                    className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
                     Contact
                   </Link>
@@ -92,7 +92,6 @@ const Footer = () => {
             <div className="flex flex-col gap-6 w-full lg:w-[201px]">
               <h4
                 className="text-xl font-semibold leading-[30px] text-[#FEFEFE]"
-                style={{ fontFamily: "Poppins" }}
               >
                 Legal
               </h4>
@@ -100,7 +99,7 @@ const Footer = () => {
                 <li>
                   <Link
                     href="/privacy-policy"
-                    className="text-base leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
+                    className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
                     Privacy Policy
                   </Link>
@@ -108,7 +107,7 @@ const Footer = () => {
                 <li>
                   <Link
                     href="/terms-conditions"
-                    className="text-base leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
+                    className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
                     Terms & Conditions
                   </Link>
@@ -131,7 +130,7 @@ const Footer = () => {
                   />
                   <a
                     href="mailto:info@alphaclub.ae"
-                    className="text-base leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
+                    className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
                     Info@alphaclub.ae
                   </a>
@@ -143,7 +142,7 @@ const Footer = () => {
                   />
                   <a
                     href="tel:+971XXXXXXXXX"
-                    className="text-base leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
+                    className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
                     +971 XXX XXX XXXX
                   </a>
@@ -154,7 +153,7 @@ const Footer = () => {
                     strokeWidth={2}
                   />
                   <div
-                    className="text-base leading-6 text-[#FEFEFE]"
+                    className="text-sm leading-6 text-[#FEFEFE]"
                   >
                     <p>Monday - Friday</p>
                     <p>9:00 AM - 5:00 PM</p>
@@ -171,7 +170,6 @@ const Footer = () => {
       <div className="flex flex-col items-center gap-6 pt-6">
         <p
           className="text-sm leading-[21px] text-center text-[#B5B5B5]"
-          style={{ fontFamily: "Poppins" }}
         >
           © {currentYear} ALPHA - Automotive Leaders and Professionals Hub
           Association. All rights reserved.
