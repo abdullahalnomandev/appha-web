@@ -109,3 +109,7 @@ body {
 .ant-select.ant-select-lg.ant-select-outlined.ant-select-in-form-item.ant-select-status-success.rounded-md.css-dev-only-do-not-override-15a0jj.ant-select-single.ant-select-show-arrow {
   background-color: #F1F1F1;
 }
+.ant-drawer-close {
+  right: 16px !important;  /* adjust as needed */
+  left: auto !important;
+}

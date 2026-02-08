@@ -129,28 +129,36 @@ const Navbar = () => {
 
           <Drawer
             title={
-              <div className="flex items-center gap-3">
-                <span className="text-lg font-bold text-white tracking-wide">
-                  ALPHA
-                </span>
-                <div className="w-8 h-8 rounded-md bg-amber flex items-center justify-center overflow-hidden">
-                  <Image
-                    src={alphaLogo}
-                    alt="ALPHA Logo"
-                    className="w-full h-full object-cover"
-                  />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-lg font-bold text-white tracking-wide">
+                    ALPHA
+                  </span>
+                  <div className="w-8 h-8 rounded-md bg-amber flex items-center justify-center overflow-hidden">
+                    <Image
+                      src={alphaLogo}
+                      alt="ALPHA Logo"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
+                {/* The X button manually placed on the right */}
+                <span
+                  className="text-white cursor-pointer"
+                  onClick={() => setIsOpen(false)}
+                >
+                  ✕
+                </span>
               </div>
             }
             placement="right"
             onClose={() => setIsOpen(false)}
             open={isOpen}
-            closeIcon={<span className="text-white">✕</span>}
+            closable={false} // disable default close button
             styles={{
               header: {
                 backgroundColor: "#0c1223",
                 borderBottom: "1px solid #D7A859",
-                color: "white",
               },
               body: { backgroundColor: "#0c1223", color: "white" },
               mask: { backgroundColor: "rgba(0, 0, 0, 0.7)" },
