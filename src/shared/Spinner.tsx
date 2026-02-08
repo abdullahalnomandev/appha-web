@@ -1,22 +1,12 @@
 "use client";
-import Image from "next/image";
 import React from "react";
 
 const Spinner = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-screen  gap-4 w-full bg-transparent rounded-xl">
-      {/* Logo with scale animation */}
+    <div className="flex flex-col items-center justify-center h-screen gap-4 w-full bg-transparent rounded-xl">
+      {/* Loading text with scale animation */}
       <div className="scale-pulse">
-        {/* Logo */}
-        <div className="flex items-center w-full ">
-          <Image
-            src={"/logo.svg"}
-            alt="logo"
-            width={1000}
-            height={200}
-            className="h-32 w-fit object-contain"
-          />
-        </div>
+        <span className="text-2xl font-semibold text-gray-700">Loading...</span>
       </div>
 
       {/* Custom animation style */}

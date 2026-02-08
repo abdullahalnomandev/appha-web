@@ -113,3 +113,26 @@ body {
   right: 16px !important;  /* adjust as needed */
   left: auto !important;
 }
+
+
+.react-international-phone-input {
+  border-radius: 0.375rem;
+  background-color: #F1F1F1 !important;
+  border: none;
+  width: 100%;
+  padding: 0.5rem;
+}
+
+button.react-international-phone-country-selector-button {
+    background: #f1f1f1;
+}
+button.react-international-phone-country-selector-button:focus {
+    background: #e0b20b !important;
+}
+
+
+.react-international-phone-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #e0b20b !important;
+}

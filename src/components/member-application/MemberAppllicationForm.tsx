@@ -1,5 +1,5 @@
 "use client";
-
+import { PhoneInput } from "react-international-phone";
 import { useState } from "react";
 import {
   Form,
@@ -18,6 +18,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import type { UploadFile } from "antd/es/upload/interface";
 import { BsUpload } from "react-icons/bs";
 import { Rule } from "antd/es/form";
+import "react-international-phone/style.css";
 
 const { TextArea } = Input;
 
@@ -159,6 +160,7 @@ export default function MemberApplicationForm() {
   const [form] = Form.useForm();
   const [emiratesIdFile, setEmiratesIdFile] = useState<UploadFile[]>([]);
   const [passportFile, setPassportFile] = useState<UploadFile[]>([]);
+  const [phone, setPhone] = useState("");
 
   const handleUpload = (
     file: UploadFile,
@@ -169,7 +171,8 @@ export default function MemberApplicationForm() {
   };
 
   const onFinish = (values: any) => {
-    console.log(values);
+    const submission = { ...values, mobile: phone };
+    console.log(submission);
     message.success("Application submitted successfully!");
   };
 
@@ -201,6 +204,16 @@ export default function MemberApplicationForm() {
                     <DatePicker
                       size="large"
                       className="w-full rounded-md bg-[#F1F1F1]! border-none"
+                    />
+                  ) : field.name === "mobile" ? (
+                    <PhoneInput
+                      defaultCountry="ae"
+                      value={phone}
+                      onChange={(value) => setPhone(value)}
+                      inputClassName="w-full rounded-md bg-[#F1F1F1] border-none"
+                      placeholder="Mobile Number"
+                      name="mobile"
+                      required
                     />
                   ) : (
                     <Input

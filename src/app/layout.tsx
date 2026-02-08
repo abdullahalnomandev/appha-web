@@ -13,9 +13,9 @@ export const metadata: Metadata = {
   title: "ALPHA",
   description:
     "Discover a smarter shopping experience designed just for you. Browse thousands of products, enjoy app-only discounts, track your orders, and get everything you love — all with a single tap with Spiralink.",
-  icons: {
-    icon: "/favicon.svg",
-  },
+  // icons: {
+  //   icon: "/favicon.svg",
+  // },
 };
 
 export default function RootLayout({
