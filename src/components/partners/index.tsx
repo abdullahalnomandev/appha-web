@@ -37,7 +37,7 @@ const Partners = () => {
             <h2 className="text-3xl font-extrabold mb-6 text-center">
               What Partners Receive
             </h2>
-            <div className="bg-navy rounded-lg text-center p-8">
+            <div className="bg-navy rounded-lg p-8">
               <ul className="space-y-4">
                 {partnerReceives.map((item, index) => (
                   <li

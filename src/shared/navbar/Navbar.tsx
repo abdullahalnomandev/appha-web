@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
-import { Drawer } from "antd";
+import { Button, Drawer } from "antd";
 import alphaLogo from "@/assets/alpha-logo.png";
 
 const navLinks = [
@@ -79,7 +79,7 @@ const Navbar = () => {
               </span>
             </Link>
             <Link
-              href="/partner-login"
+              href="/membership-application"
               className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-[#D7A859] px-4 py-3 text-sm font-medium text-[#050507] group"
             >
               {/* Sliding background */}
@@ -162,7 +162,7 @@ const Navbar = () => {
                   key={link.path}
                   href={link.path}
                   className={`text-base font-medium transition-colors duration-300 ${
-                    pathname === link.path ? "text-[#D7A859]" : "text-white"
+                    pathname === link.path ? "text-[#D7A859]!" : "text-white!"
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -183,6 +183,29 @@ const Navbar = () => {
                 </Link>
                 <Link
                   href="/partner-login"
+                  className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md 
+             border border-[#D7A859]! bg-[#D7A859]! px-4 py-3 text-sm font-medium 
+             text-[#050507]! group"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {/* reverse hover fill */}
+                  <span
+                    className="absolute inset-0 bg-[#D7A859]! scale-x-100 origin-right 
+               transition-transform duration-300 ease-out 
+               group-hover:scale-x-0"
+                  ></span>
+
+                  {/* text */}
+                  <span
+                    className="relative z-10 text-[#050507]! transition-colors duration-300 
+               group-hover:text-[#050507]!"
+                  >
+                    Apply Here
+                  </span>
+                </Link>
+
+                {/* <Link
+                  href="/partner-login"
                   className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-transparent px-4 py-3 text-sm font-medium text-[#D7A859] group"
                   onClick={() => setIsOpen(false)}
                 >
@@ -190,7 +213,7 @@ const Navbar = () => {
                   <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
                    Apply Here
                   </span>
-                </Link>
+                </Link> */}
               </div>
             </div>
           </Drawer>
