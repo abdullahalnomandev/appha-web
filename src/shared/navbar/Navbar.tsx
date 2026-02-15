@@ -72,7 +72,7 @@ const Navbar = () => {
 
               {/* Text */}
               <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
-                Membership Login
+               Partner Login
               </span>
             </Link>
             <Link
@@ -180,7 +180,7 @@ const Navbar = () => {
                 >
                   <span className="absolute inset-0 bg-[#D7A859] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
                   <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
-                    Membership Login
+                    Partner Login
                   </span>
                 </Link>
                 <Link

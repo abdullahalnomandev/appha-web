@@ -1,6 +1,6 @@
 "use client";
 import { PhoneInput } from "react-international-phone";
-import { useState } from "react";
+import { Suspense, use, useState } from "react";
 import {
   Form,
   Input,
@@ -19,7 +19,10 @@ import type { UploadFile } from "antd/es/upload/interface";
 import { BsUpload } from "react-icons/bs";
 import { Rule } from "antd/es/form";
 import "react-international-phone/style.css";
-
+import { clientFetch } from "@/lib/client-fetch";
+import { title } from "process";
+import Membership from "./MemberShip";
+import { toast } from "sonner";
 const { TextArea } = Input;
 
 /* -------------------- Reusable Section Header -------------------- */
@@ -34,14 +37,8 @@ const SectionHeader = ({ title }: { title: string }) => (
 /* -------------------- Field Configs -------------------- */
 const primaryMemberFields = [
   {
-    name: "firstName",
-    label: "First Name",
-    span: 12,
-    rules: [{ required: true }],
-  },
-  {
-    name: "lastName",
-    label: "Last Name",
+    name: "name",
+    label: "Name",
     span: 12,
     rules: [{ required: true }],
   },
@@ -52,7 +49,7 @@ const primaryMemberFields = [
     rules: [{ required: true }],
   },
   {
-    name: "company",
+    name: "organizationName",
     label: "Company / Organization",
     span: 12,
     rules: [{ required: true }],
@@ -83,13 +80,13 @@ const primaryMemberFields = [
     rules: [{ required: true }],
   },
   {
-    name: "country",
+    name: "countryOfResidence",
     label: "Country of Residence",
-    span: 24,
+    span: 12,
     rules: [{ required: true }],
   },
   {
-    name: "address",
+    name: "residenceAddress",
     label: "Residential Address",
     type: "textarea",
     span: 24,
@@ -115,13 +112,14 @@ const professionalFields = [
     rules: [{ required: true }],
   },
   {
-    name: "experience",
+    name: "yearsOfExperience",
     label: "Years of Experience",
     span: 12,
+    type: "number",
     rules: [{ required: true }],
   },
   {
-    name: "employer",
+    name: "currentEmployer",
     label: "Current Employer",
     span: 12,
     rules: [{ required: true }],
@@ -133,7 +131,7 @@ const professionalFields = [
     rules: [{ required: true }],
   },
   {
-    name: "annualIncome",
+    name: "annualGrossSalary",
     label: "Annual Gross Salary (AED)",
     type: "number",
     span: 24,
@@ -155,6 +153,19 @@ const benefitsInterests = [
   { value: "lifestyle", label: "Lifestyle & Wellness" },
 ];
 
+
+interface Membership {
+  title: string;
+  membershipType: string;
+  _id: string;
+}
+interface IMembershipType {
+  data: Membership[]
+}
+
+
+const membershipPromise = clientFetch<IMembershipType>("/membership-plan", { cache: "force-cache" });
+
 /* -------------------- Component -------------------- */
 export default function MemberApplicationForm() {
   const [form] = Form.useForm();
@@ -162,19 +173,92 @@ export default function MemberApplicationForm() {
   const [passportFile, setPassportFile] = useState<UploadFile[]>([]);
   const [phone, setPhone] = useState("");
 
+  console.log({emiratesIdFile, passportFile});
+
+  // Client-side fetch using `use` (Suspense)
+  const membershipType = use(membershipPromise);
+
+  // Map membership data for Radio
+  const organizeTypes = membershipType?.data?.map((type) => ({
+    value: type._id,
+    label: type.title,
+    membershipType: type.membershipType,
+  }));
+
   const handleUpload = (
     file: UploadFile,
-    setFile: React.Dispatch<React.SetStateAction<UploadFile[]>>,
+    setFile: React.Dispatch<React.SetStateAction<UploadFile[]>>
   ) => {
     setFile([file]);
     return false;
   };
 
-  const onFinish = (values: any) => {
-    const submission = { ...values, mobile: phone };
-    console.log(submission);
-    message.success("Application submitted successfully!");
+  // const onFinish = (values: any) => {
+  //   const submission = { ...values, mobile: phone };
+  //   console.log(submission);
+  //   message.success("Application submitted successfully!");
+  // };
+
+
+  const onFinish = async (values: any) => {
+    try {
+      const formData = new FormData();
+
+      formData.append("membershipType", values.membershipType);
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("phone", phone);
+      formData.append("jobTitle", values.jobTitle);
+      formData.append("organizationName", values.organizationName);
+      formData.append("dateOfBirth", values.dateOfBirth?.toISOString());
+      formData.append("nationality", values.nationality);
+      formData.append("countryOfResidence", values.countryOfResidence);
+      formData.append("residenceAddress", values.residenceAddress);
+      formData.append("industrySector", values.industrySector);
+      formData.append("yearsOfExperience", values.yearsOfExperience);
+      formData.append("currentEmployer", values.currentEmployer);
+      formData.append("workLocation", values.workLocation);
+      formData.append("annualGrossSalary", values.annualGrossSalary);
+
+      values.benefitsAndLifestyleInterests?.forEach((item: string) => {
+        formData.append("benefitsAndLifestyleInterests", item);
+      });
+
+      formData.append("confirmAcknowledgement", values.confirmAcknowledgement);
+      formData.append("confirmAgreement", values.confirmAgreement);
+
+      if (!! emiratesIdFile[0]) {
+        formData.append(
+          "image",
+          emiratesIdFile[0] as any
+        );
+      }
+
+      if (passportFile[0]) {
+        formData.append(
+          "logo",
+          passportFile[0] as any
+        );
+      }
+      
+
+      const response = await clientFetch("/membership-application/crate-from", {
+        method: "POST",
+        body: formData,
+      });
+
+
+      if (!!response) {
+        message?.success("Application submitted successfully!");
+        form.resetFields();
+        setEmiratesIdFile([]);
+        setPassportFile([]);
+      }
+    } catch (err) {
+      toast.error(((err as Error)?.message) || "Submission failed!");
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-white py-8 px-4">
@@ -264,21 +348,23 @@ export default function MemberApplicationForm() {
           {/* Membership Type */}
           <div className="pt-6">
             <SectionHeader title="Membership Type" />
-            <Form.Item name="membershipType" rules={[{ required: true }]}>
-              <Radio.Group className="flex flex-col gap-3">
-                {membershipTypes.map((t) => (
-                  <Radio key={t.value} value={t.value}>
-                    {t.label}
-                  </Radio>
-                ))}
-              </Radio.Group>
-            </Form.Item>
+            <Suspense fallback={<div>Loading membership types...</div>}>
+              <Form.Item name="membershipType" rules={[{ required: true }]}>
+                <Radio.Group className="flex flex-col gap-3">
+                  {organizeTypes?.map((t) => (
+                    <Radio key={t.value} value={t.membershipType}>
+                      {t.label}
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              </Form.Item>
+            </Suspense>
           </div>
 
           {/* Interests */}
           <div className="pt-6">
             <SectionHeader title="Benefits & Lifestyle Interests" />
-            <Form.Item name="interests" rules={[{ required: true }]}>
+            <Form.Item name="benefitsAndLifestyleInterests" rules={[{ required: true }]}>
               <Checkbox.Group className="flex flex-col gap-3">
                 {benefitsInterests.map((i) => (
                   <Checkbox key={i.value} value={i.value}>
@@ -295,7 +381,7 @@ export default function MemberApplicationForm() {
               <Col xs={24} md={12}>
                 <Form.Item
                   label="Emirates ID"
-                  name="emiratesId"
+                  name="image"
                   rules={[
                     { required: true, message: "Emirates ID is required" },
                   ]}
@@ -327,7 +413,7 @@ export default function MemberApplicationForm() {
               <Col xs={24} md={12}>
                 <Form.Item
                   label="Passport"
-                  name="passport"
+                  name="logo"
                   rules={[{ required: true, message: "Passport is required" }]}
                   className="w-full"
                 >
@@ -359,7 +445,7 @@ export default function MemberApplicationForm() {
             </h2>
 
             <Form.Item
-              name="confirmAccuracy"
+              name="confirmAcknowledgement"
               valuePropName="checked"
               rules={[{ required: true, message: "Please confirm accuracy" }]}
               className="mb-2"
@@ -369,7 +455,7 @@ export default function MemberApplicationForm() {
               </Checkbox>
             </Form.Item>
             <Form.Item
-              name="agreeTerms"
+              name="confirmAgreement"
               valuePropName="checked"
               rules={[{ required: true, message: "Please agree to the terms" }]}
               className="mb-0"

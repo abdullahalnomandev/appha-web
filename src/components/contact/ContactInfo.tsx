@@ -1,16 +1,19 @@
 "use client";
-import { Form, Input, Button, Row, Col, Card } from "antd";
-import { MailOutlined, PhoneOutlined, ClockCircleOutlined, EnvironmentOutlined } from '@ant-design/icons';
+import { useState } from "react";
+import { Form, Input, Button, Row, Col, Card, message } from "antd";
+import {
+  MailOutlined,
+  PhoneOutlined,
+  ClockCircleOutlined,
+  EnvironmentOutlined,
+} from "@ant-design/icons";
+import { clientFetch } from "@/lib/client-fetch";
 const { TextArea } = Input;
 
 function ContactInfo() {
   const [form] = Form.useForm();
-
-  const onFinish = (values: any) => {
-    console.log("Form values:", values);
-    // Handle form submission here
-    form.resetFields();
-  };
+  const [msgApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = useState(false);
 
   // Contact cards configuration
   const contactCards = [
@@ -45,7 +48,7 @@ function ContactInfo() {
       icon: <EnvironmentOutlined className="text-xl text-red-500" />,
       title: "Address",
       content: <div className="text-gray-600">United Arab Emirates</div>,
-    }
+    },
   ];
 
   // Form fields configuration
@@ -57,13 +60,25 @@ function ContactInfo() {
         { required: true, message: "Please enter your name" },
         { min: 2, message: "Name must be at least 2 characters" },
       ],
-      input: <Input placeholder="Enter your name" size="large" className="rounded-md" />,
+      input: (
+        <Input
+          placeholder="Enter your name"
+          size="large"
+          className="rounded-md"
+        />
+      ),
     },
     {
-      name: "membershipNumber",
+      name: "memberShipId",
       label: "Membership Number",
       rules: [{ required: true, message: "Please enter your membership number" }],
-      input: <Input placeholder="Enter your membership number" size="large" className="rounded-md" />,
+      input: (
+        <Input
+          placeholder="Enter your membership number"
+          size="large"
+          className="rounded-md"
+        />
+      ),
     },
     {
       name: "email",
@@ -72,16 +87,24 @@ function ContactInfo() {
         { required: true, message: "Please enter your email" },
         { type: "email", message: "Please enter a valid email" },
       ],
-      input: <Input placeholder="Enter your email" size="large" className="rounded-md" />,
+      input: (
+        <Input placeholder="Enter your email" size="large" className="rounded-md" />
+      ),
     },
     {
-      name: "phoneNumber",
+      name: "contact",
       label: "Phone Number",
       rules: [
         { required: true, message: "Please enter your phone number" },
         { pattern: /^[0-9+\s-()]+$/, message: "Please enter a valid phone number" },
       ],
-      input: <Input placeholder="Enter your phone number" size="large" className="rounded-md" />,
+      input: (
+        <Input
+          placeholder="Enter your phone number"
+          size="large"
+          className="rounded-md"
+        />
+      ),
     },
     {
       name: "message",
@@ -90,37 +113,49 @@ function ContactInfo() {
         { required: true, message: "Please enter your message" },
         { min: 10, message: "Message must be at least 10 characters" },
       ],
-      input: <TextArea rows={4} placeholder="Enter your message" size="large" className="rounded-md" />,
+      input: (
+        <TextArea
+          rows={4}
+          placeholder="Enter your message"
+          size="large"
+          className="rounded-md"
+        />
+      ),
     },
   ];
 
+  // Handle form submission
+  const onFinish = async (values: any) => {
+    setLoading(true);
+    try {
+      await clientFetch("/contact-form/create-form", {
+        method: "POST",
+        body: JSON.stringify(values),
+      });
+      msgApi.success("Message sent successfully!");
+      form.resetFields();
+    } catch (err: any) {
+      console.error(err);
+      msgApi.error(err.message || "Submission failed!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="py-16 px-5 max-w-7xl mx-auto">
+      {contextHolder} {/* Required for dynamic AntD messages */}
       <Row gutter={[32, 32]}>
         {/* Left Side - Contact Information */}
-        <Col xs={24} md={10}>
-          <h2 className="text-2xl text-black font-bold mb-6">Get in Touch</h2>
-          {contactCards.map((card, index) => (
-            <Card
-              key={index}
-              variant="borderless"
-              className=" shadow-md rounded-lg mb-5!"
-              style={{boxShadow:'0px 4px 6px 2px #00000014'}}
-            >
-              <div className="flex items-center gap-3">
-                {card.icon}
-                <div>
-                  <div className="font-medium mb-1">{card.title}</div>
-                  {card.content}
-                </div>
-              </div>
-            </Card>
-          ))}
-        </Col>
+        {/* Left Side - Contact Information */} <Col xs={24} md={10}> <h2 className="text-2xl text-black font-bold mb-6">Get in Touch</h2> {contactCards.map((card, index) => (<Card key={index} variant="borderless" className=" shadow-md rounded-lg mb-5!" style={{ boxShadow: '0px 4px 6px 2px #00000014' }} > <div className="flex items-center gap-3"> {card.icon} <div> <div className="font-medium mb-1">{card.title}</div> {card.content} </div> </div> </Card>))} </Col>
 
         {/* Right Side - Contact Form */}
-        <Col xs={24} md={14} >
-          <Card className="shadow-md rounded-lg max-w-2xl" variant="borderless" style={{boxShadow: '0px 4px 6px 2px #00000014'}}>
+        <Col xs={24} md={14}>
+          <Card
+            className="shadow-md rounded-lg max-w-2xl"
+            variant="borderless"
+            style={{ boxShadow: "0px 4px 6px 2px #00000014" }}
+          >
             <h3 className="text-2xl font-bold mb-6">Send Us Message</h3>
 
             <Form
@@ -146,6 +181,7 @@ function ContactInfo() {
                   htmlType="submit"
                   size="large"
                   block
+                  loading={loading}
                   className="h-12 text-base font-medium rounded-md"
                 >
                   Send Message

@@ -136,3 +136,14 @@ button.react-international-phone-country-selector-button:focus {
   box-shadow: none !important;
   border-color: #e0b20b !important;
 }
+
+.ant-modal-content .ant-modal-header {
+  color: #ffffff !important;
+  background: transparent !important;
+}
+:where(.css-dev-only-do-not-override-15a0jj).ant-modal .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-modal-close{
+  color: #ffffff !important;
+}

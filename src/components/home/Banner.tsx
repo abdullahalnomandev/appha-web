@@ -1,59 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Award, Shield, Users, TrendingUp } from "lucide-react";
-import heroCar from "@/assets/image-bg.png";
 import alpha from "@/assets/image 2.png";
-import FeatureCard from "../ui/FeatureCard";
 import MemberBenefits from "./MemberPrivileges";
 import OurSponsor from "./Sponsor";
 
-const privilegeCards = [
-  {
-    title: "Beach Clubs",
-    description: "Exclusive access to premium beach clubs",
-  },
-  {
-    title: "Gym & Fitness Center",
-    description: "Access to world-class fitness facilities",
-  },
-  {
-    title: "Restaurants",
-    description: "Exclusive access to premium restaurants",
-  },
-  {
-    title: "Social Events",
-    description: "Exclusive access to premium social events",
-  },
-];
-
-const whyChooseFeatures = [
-  {
-    icon: Award,
-    title: "Excellence",
-    description:
-      "We deliver the same high standards our members provide to their customers",
-  },
-  {
-    icon: Shield,
-    title: "Exclusivity",
-    description:
-      "Curated partnerships and experiences for automotive professionals",
-  },
-  {
-    icon: Users,
-    title: "Community",
-    description:
-      "Building meaningful connections within the automotive industry",
-  },
-  {
-    icon: TrendingUp,
-    title: "Value",
-    description: "Genuine benefits that enhance your lifestyle and career",
-  },
-];
-
 
 const Banner = () => {
+
+
   return (
     <div>
       {/* Hero Section */}
