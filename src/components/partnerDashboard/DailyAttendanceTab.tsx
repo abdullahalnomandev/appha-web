@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Search, CalendarCheck } from "lucide-react";
 import { toast } from "sonner";
+import { Form, Input, Button } from "antd";
 
 interface Member {
   name: string;
@@ -34,15 +35,12 @@ const DailyAttendanceTab = () => {
     },
   ];
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSearch = () => {
     if (!search.trim()) {
       toast.error("Please enter membership number");
       return;
     }
 
-    // Fake API result (replace later)
     setFound({
       name: "Ahmed Al Maktoum",
       id: search,
@@ -64,80 +62,86 @@ const DailyAttendanceTab = () => {
         {stats.map((s) => (
           <div
             key={s.label}
-            className="bg-slate-800 rounded-lg border border-slate-700 p-5"
+            className="bg-white rounded-lg border border-gray-200 p-5 hover:scale-105 transition-transform"
           >
-            <p className="text-sm text-gray-400">{s.label}</p>
+            <p className="text-sm text-gray-600">{s.label}</p>
             <p className={`text-3xl font-bold mt-3 ${s.color}`}>
               {s.value}
             </p>
-            <p className="text-xs text-gray-500 mt-1">{s.sub}</p>
+            <p className="text-xs text-gray-400 mt-1">{s.sub}</p>
           </div>
         ))}
       </div>
 
       {/* Attendance System */}
-      <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-        <h3 className="text-base font-bold text-white">
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-base font-bold text-gray-900">
           Attendance Validation System
         </h3>
 
-        <p className="text-sm text-gray-400 mb-5">
+        <p className="text-sm text-gray-600 mb-5">
           Search members, confirm attendance, and track daily usage in
           real-time
         </p>
 
-        {/* Search Form */}
-        <form onSubmit={handleSearch} className="flex gap-3 mb-6">
-          <div className="flex-1">
-            <label className="text-sm font-medium text-yellow-400 block mb-1.5">
-              Membership Number
-            </label>
+        {/* 🔎 Ant Design Search Form */}
+        <Form layout="vertical" onFinish={handleSearch} className="mb-6">
+          <div className="flex gap-3 items-end">
+            <Form.Item
+              label="Membership Number"
+              className="flex-1 mb-0"
+            >
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Enter membership number"
+                size="large"
+              />
+            </Form.Item>
 
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Enter membership number"
-              className="w-full bg-slate-900 border border-slate-700 rounded-md px-4 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-yellow-400"
-            />
+            <Form.Item className="mb-0">
+              <Button
+                type="primary"
+                size="large"
+                htmlType="submit"
+                icon={<Search size={16} />}
+              >
+                Search
+              </Button>
+            </Form.Item>
           </div>
-
-          <button
-            type="submit"
-            className="self-end flex items-center gap-2 px-5 py-2.5 rounded-md font-semibold text-black text-sm bg-yellow-400 hover:bg-yellow-500 transition"
-          >
-            <Search className="w-4 h-4" />
-            Search
-          </button>
-        </form>
+        </Form>
 
         {/* Empty State */}
         {!found ? (
-          <div className="flex flex-col items-center justify-center py-16 text-gray-500">
-            <CalendarCheck className="w-12 h-12 mb-3 opacity-40" />
+          <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+            <CalendarCheck className="w-12 h-12 mb-3 opacity-60" />
             <p className="text-sm">
               Enter a membership number to validate attendance
             </p>
           </div>
         ) : (
           /* Found Member */
-          <div className="p-5 rounded-lg bg-slate-900 border border-slate-700">
+          <div className="p-5 rounded-lg bg-gray-50 border border-gray-200">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-full bg-yellow-400/20 flex items-center justify-center">
-                <CalendarCheck className="w-6 h-6 text-yellow-400" />
+              <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
+                <CalendarCheck className="w-6 h-6 text-yellow-600" />
               </div>
 
               <div>
-                <p className="font-semibold text-white">{found.name}</p>
-                <p className="text-xs text-gray-400">{found.id}</p>
+                <p className="font-semibold text-gray-900">{found.name}</p>
+                <p className="text-xs text-gray-500">{found.id}</p>
               </div>
             </div>
 
-            <button
+            <Button
+              type="primary"
+              size="large"
+              block
               onClick={handleConfirm}
-              className="w-full py-2.5 rounded-md font-semibold text-black text-sm bg-yellow-400 hover:bg-yellow-500 transition"
             >
               Confirm Attendance
-            </button>
+            </Button>
           </div>
         )}
       </div>

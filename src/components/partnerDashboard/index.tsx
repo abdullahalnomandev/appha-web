@@ -5,7 +5,7 @@ import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LayoutDashboard, Gift, Users, CalendarCheck } from "lucide-react";
 import DashboardTab from "./DashboardTab";
-import ManageOffersTab from "./ManageOffersTab";
+import ManageOffersTab from "./ManageOffer/ManageOffersTab";
 import MemberValidationTab from "./MemberValidationTab";
 import DailyAttendanceTab from "./DailyAttendanceTab";
 
@@ -70,7 +70,7 @@ function PartnerDashboardTabs() {
       {/* Tabs */}
       <div
         ref={containerRef}
-        className="relative mb-8 bg-[#1e293b] rounded-lg border border-white/10 p-1 inline-flex"
+        className="relative mb-8 bg-white rounded-lg border border-gray-200 p-1 inline-flex shadow-sm"
       >
         <div
           className="absolute top-1 bottom-1 rounded-md transition-all duration-300 ease-in-out"
@@ -88,7 +88,7 @@ function PartnerDashboardTabs() {
             className={`relative z-10 cursor-pointer flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300 ${
               activeTab === tab.key
                 ? "text-black"
-                : "text-white/60 hover:text-white"
+                : "text-gray-500 hover:text-gray-900"
             }`}
           >
             <tab.icon className="w-4 h-4" />

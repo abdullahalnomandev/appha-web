@@ -36,9 +36,8 @@ const OfferModal: FC<OfferModalProps> = ({
       onCancel={onClose}
       footer={null}
       centered
-      styles={{ content: { backgroundColor: "#0f172a" } }}
     >
-      <p className="text-sm! text-gray-400! mb-5!">
+      <p className="text-sm mb-5">
         All content is subject to approval before being published.
       </p>
 
@@ -56,36 +55,35 @@ const OfferModal: FC<OfferModalProps> = ({
         }}
       >
         <Form.Item
-          label={<span className="text-white">Offer Title</span>}
+          label="Offer Title"
           name="title"
           rules={[{ required: true, message: "Please enter the offer title" }]}
         >
           <Input
             placeholder="e.g., 20% Off Premium Detailing Service"
-            className="bg-slate-900! text-sm! text-white! placeholder:text-gray-500! border-slate-700! focus:border-yellow-400!"
           />
         </Form.Item>
 
         <Form.Item
-          label={<span className="text-white!">Description</span>}
+          label="Description"
           name="description"
           rules={[{ required: true, message: "Please enter description" }]}
         >
           <Input.TextArea
             rows={3}
             placeholder="Describe your offer in detail..."
-            className="bg-slate-900! text-white! placeholder:text-gray-500! border-slate-700! focus:border-yellow-400! resize-none!"
+            className="resize-none"
           />
         </Form.Item>
 
-        <Form.Item label={<span className="text-white!">Offer Image</span>} name="image">
+        <Form.Item label="Offer Image" name="image" getValueFromEvent={(e) => e?.fileList}>
           <Upload.Dragger
             {...uploadProps}
-            className="bg-slate-900! border-slate-700! rounded-lg!"
+            className="rounded-lg"
           >
             <div className="py-6 flex flex-col items-center justify-center">
               <Plus className="w-5 h-5 text-gray-400 mb-2" />
-              <span className="text-xs text-gray-400!">
+              <span className="text-xs text-gray-400">
                 Click or drag image here to upload
               </span>
             </div>

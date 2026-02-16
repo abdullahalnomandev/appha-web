@@ -62,16 +62,16 @@ export default function DashboardTab() {
         {stats.map((s) => (
           <div
             key={s.label}
-            className="bg-[#1e293b] rounded-lg border border-white/10 p-5"
+            className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm hover:scale-105 transition-transform"
           >
-            <p className="text-sm text-white/50">{s.label}</p>
+            <p className="text-sm text-gray-500">{s.label}</p>
 
             <div className="flex items-end justify-between mt-3">
               <div>
                 <p className={`text-3xl font-bold ${s.color}`}>
                   {s.value}
                 </p>
-                <p className="text-xs text-white/40 mt-1">
+                <p className="text-xs text-gray-400 mt-1">
                   {s.sub}
                 </p>
               </div>
@@ -85,11 +85,11 @@ export default function DashboardTab() {
       </div>
 
       {/* Recent Offers */}
-      <div className="bg-[#1e293b] rounded-lg border border-yellow-500/30 p-6">
-        <h3 className="text-base font-bold text-white">
+      <div className="bg-white rounded-lg border border-yellow-200 p-6 shadow-sm">
+        <h3 className="text-base font-bold text-gray-900">
           Recent Offers
         </h3>
-        <p className="text-sm text-white/40 mb-4">
+        <p className="text-sm text-gray-500 mb-4">
           Your submitted and active offers
         </p>
 
@@ -97,13 +97,13 @@ export default function DashboardTab() {
           {recentOffers.map((o) => (
             <div
               key={o.title}
-              className="flex items-center justify-between p-4 rounded-lg bg-[#0f172a] border border-white/5"
+              className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-colors"
             >
               <div>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-sm font-semibold text-gray-900">
                   {o.title}
                 </p>
-                <p className="text-xs text-white/40 mt-0.5">
+                <p className="text-xs text-gray-500 mt-0.5">
                   Views: {o.views} · Redemptions: {o.redemptions}
                 </p>
               </div>
@@ -111,8 +111,8 @@ export default function DashboardTab() {
               <span
                 className={`text-xs font-medium px-2.5 py-1 rounded ${
                   o.status === "approved"
-                    ? "bg-emerald-500/20 text-emerald-400"
-                    : "bg-orange-500/20 text-orange-400"
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-orange-100 text-orange-700"
                 }`}
               >
                 {o.status}

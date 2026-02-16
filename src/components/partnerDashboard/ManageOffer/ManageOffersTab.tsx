@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "antd";
-import OfferModal from "./Modal/OfferModal";
+import OfferModal from "./OfferModal";
 
 interface Offer {
   title: string;
@@ -57,8 +57,8 @@ const ManageOffersTab = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-bold text-white">Manage Offers</h2>
-          <p className="text-sm text-gray-400">
+          <h2 className="text-lg font-bold text-gray-900">Manage Offers</h2>
+          <p className="text-sm text-gray-600">
             Create and manage your partnership offers
           </p>
         </div>
@@ -67,16 +67,16 @@ const ManageOffersTab = () => {
           type="primary"
           size="large"
           onClick={handleAdd}
-          className="flex items-center gap-2 font-semibold text-black bg-yellow-400 border-yellow-400 hover:bg-yellow-500"
+          className="flex items-center gap-2 font-semibold text-white bg-blue-600 border-blue-600 hover:bg-blue-700"
         >
           <Plus className="w-4 h-4" /> New Offer
         </Button>
       </div>
 
       {/* Offers List */}
-      <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-        <h3 className="text-base font-bold text-white">Your Offers</h3>
-        <p className="text-sm text-gray-400 mb-4">
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-base font-bold text-gray-900">Your Offers</h3>
+        <p className="text-sm text-gray-600 mb-4">
           Manage and update your existing offers
         </p>
 
@@ -84,17 +84,17 @@ const ManageOffersTab = () => {
           {existingOffers.map((o) => (
             <div
               key={o.title}
-              className="p-4 rounded-lg bg-slate-900 border border-slate-700"
+              className="p-4 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-white">{o.title}</p>
+                  <p className="text-sm font-semibold text-gray-900">{o.title}</p>
 
                   <span
                     className={`inline-block text-xs font-medium px-2 py-0.5 rounded mt-1 ${
                       o.status === "approved"
-                        ? "bg-green-500/20 text-green-400"
-                        : "bg-orange-500/20 text-orange-400"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-orange-100 text-orange-700"
                     }`}
                   >
                     {o.status}
@@ -103,13 +103,13 @@ const ManageOffersTab = () => {
 
                 <button
                   onClick={() => handleEdit(o)}
-                  className="text-xs text-yellow-400 cursor-pointer border border-yellow-400/40 rounded px-3 py-1 hover:bg-yellow-400/10 transition"
+                  className="text-xs text-blue-600 cursor-pointer border border-blue-300 rounded px-3 py-1 hover:bg-blue-50 transition"
                 >
                   Edit
                 </button>
               </div>
 
-              <div className="flex gap-6 mt-3 text-xs text-gray-400">
+              <div className="flex gap-6 mt-3 text-xs text-gray-600">
                 <span>Total Views: {o.views}</span>
                 <span>Redemptions: {o.redemptions}</span>
               </div>
