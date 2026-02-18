@@ -1,0 +1,69 @@
+import { authKey } from "@/constants/storageKey";
+import { getCokkiesToken } from "../getToken";
+
+export async function apiFetch<T>(
+    endpoint: string,
+    options: RequestInit = {},
+): Promise<T> {
+
+    // const accessToken =  await getCokkiesToken();
+
+    const isFormData = options.body instanceof FormData;
+    let accessToken = '';
+    if ( typeof window !== 'undefined') {
+        accessToken = sessionStorage.getItem(authKey) || '';
+    } else {
+        accessToken = await getCokkiesToken() || '';
+        console.log('tokenform server', accessToken);
+    }
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+        ...options,
+        headers: {
+            ...(isFormData ? {} : { "Content-Type": "application/json" }),
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+            ...options.headers,
+        },
+        cache: "no-store",
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        throw new Error(
+            errorData?.message ||
+            errorData?.errorMessages?.[0]?.message ||
+            `API Error: ${res.status}`
+        );
+    }
+
+    return res.json();
+}
+
+
+
+export const getImage = (path: string) => {
+    if (!path) return "";
+
+    if (path.startsWith("http://") || path.startsWith("https://")) {
+        return path;
+    }
+
+    const baseUrl = process.env.API_URL?.replace(/\/api\/v1\/?$/, "") ?? "";
+
+    return `${baseUrl}${path}`;
+};
+
+
+// type User = {
+//   id: string;
+//   name: string;
+// };
+
+// const users = await serverFetch<User[]>("/users");
+
+
+
+// await serverFetch("/posts", {
+//   method: "POST",
+//   body: JSON.stringify({ title: "Hello" }),
+// });

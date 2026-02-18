@@ -4,15 +4,27 @@ import Link from "next/link";
 import alphaLogo from "@/assets/alpha-logo.png"; // Update this path to your actual logo
 import alpha from "@/assets/image 2.png";
 import Image from "next/image";
+import { Button } from "antd";
+import { authKey } from "@/constants/storageKey";
+import { removeAccessTokenToCookie } from "@/services/action.setTokenToCookie";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+
+  const logout = () => {
+
+    sessionStorage.removeItem(authKey);
+    removeAccessTokenToCookie({
+      redirect: "/",
+    });
+
+  }
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {/* Header */}
       <header className="border-b border-gray-200">
-        <div className="max-w-[1140px] mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-285 mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/partner-dashboard">
+            <Link href="/">
               <div className="w-10 h-10 rounded-md bg-amber flex items-center justify-center overflow-hidden">
                 <Image
                   src={alpha}
@@ -27,12 +39,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          <Link
-            href="/partner-login"
-            className="flex items-center gap-2 text-sm text-yellow-600 border border-yellow-500/40 rounded-md px-4 py-2 hover:bg-yellow-50 transition"
+          <button
+            onClick={logout}
+            className="flex! items-center! gap-2! text-sm! cursor-pointer! text-yellow-600! border! border-yellow-500/40! rounded-md! px-4! py-2! hover:bg-yellow-50! transition!"
           >
-            <LogOut className="w-4 h-4" /> Logout
-          </Link>
+            <LogOut className="w-4 h-4" />
+            Logout
+          </button>
+
         </div>
       </header>
 

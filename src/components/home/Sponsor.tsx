@@ -1,6 +1,6 @@
 import Image from "next/image";
 import SectionHeading from "../ui/SectionHeading";
-import { getImage, serverFetch } from "@/lib/server-fetch";
+import { apiFetch, getImage } from "@/lib/api/api-fech";
 
 // const sponsors = [
 //   {
@@ -36,11 +36,11 @@ interface ISponsorResponse {
 
 async function OurSponsor() {
   // fetch the sponsors
-  const sponsors = await serverFetch<ISponsorResponse>("/sponsor", { cache: "no-store" });
+  const sponsors = await apiFetch<ISponsorResponse>("/sponsor", { cache: "no-store" });
 
   return (
     <section className="py-20 bg-white">
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-20">
+      <div className="max-w-360 mx-auto px-6 lg:px-20">
         {/* Section Header */}
         <div className="text-center mb-12">
           <SectionHeading>Our Sponsors</SectionHeading>

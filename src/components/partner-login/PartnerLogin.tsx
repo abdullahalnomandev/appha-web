@@ -1,19 +1,21 @@
 "use client";
+
 import { useState } from "react";
 import { Form, Input, Button, Row, Col, Card, message } from "antd";
 import { clientFetch } from "@/lib/client-fetch";
-import { toast } from "sonner";
 import Link from "next/link";
 import { LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { apiFetch } from "@/lib/api/api-fech";
+import { toast } from "sonner";
+import { setAccessTokenToCookie } from "@/services/action.setTokenToCookie";
+import { authKey } from "@/constants/storageKey";
 
 function PartnerLoginContactInfo() {
   const [form] = Form.useForm();
-  const [msgApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  
-  // Form fields configuration: only email and password
+
   const formFields = [
     {
       name: "email",
@@ -44,23 +46,28 @@ function PartnerLoginContactInfo() {
     },
   ];
 
-  // Handle form submission
-  const onFinish = async (values: any) => {
-    console.log(values);
-    router.push("/partner-dashboard");
-    // setLoading(true);
-    // try {
-    //   await clientFetch("/partner/login", {
-    //     method: "POST",
-    //     body: JSON.stringify(values),
-    //   });
-    //   toast.success("Login successful!");
-    //   form.resetFields();
-    // } catch (err: any) {
-    //   toast.error(err.message || "Login failed!");
-    // } finally {
-    //   setLoading(false);
-    // }
+  const onFinish = async (values: { email: string; password: string }) => {
+    setLoading(true);
+
+    try {
+      const res = await apiFetch("/auth/partner-login", {
+        method: "POST",
+        body: JSON.stringify(values),
+      }) as { data: { token: string } } | null;
+
+      console.log("res", res);
+      if (res && res.data.token) {
+        sessionStorage.setItem(authKey, res?.data.token);
+        setAccessTokenToCookie(res?.data.token, { redirect: "/partner-dashboard" });
+      }
+      form.resetFields();
+
+    } catch (err: any) {
+      message.error(err.message || "Login failed!");
+      // toast.error(err.message || "Login failed!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -72,10 +79,14 @@ function PartnerLoginContactInfo() {
             variant="borderless"
             style={{ boxShadow: "0px 4px 6px 2px #00000014" }}
           >
-             <div className="w-14 h-14 rounded-full bg-yellow-400/10 flex items-center justify-center mx-auto mb-4">
-                <LogIn className="w-7 h-7 text-yellow-400" />
-              </div>
-            <h3 className="text-2xl font-bold mb-2 text-center">Welcome Back!</h3>
+            <div className="w-14 h-14 rounded-full bg-yellow-400/10 flex items-center justify-center mx-auto mb-4">
+              <LogIn className="w-7 h-7 text-yellow-400" />
+            </div>
+
+            <h3 className="text-2xl font-bold mb-2 text-center">
+              Welcome Back!
+            </h3>
+
             <p className="text-sm text-gray-600 text-center mb-6">
               Sign in to manage your offers and benefits.
             </p>
@@ -84,14 +95,19 @@ function PartnerLoginContactInfo() {
               form={form}
               layout="vertical"
               onFinish={onFinish}
+              initialValues={{ email: "hiyon20889@bitoini.com", password: "mH8@o@D1gWh8" }}
               autoComplete="off"
             >
               {formFields.map((field) => (
                 <Form.Item
                   key={field.name}
-                  label={<span className="text-base text-gray-700">{field.label}</span>}
+                  label={
+                    <span className="text-base text-gray-700">
+                      {field.label}
+                    </span>
+                  }
                   name={field.name}
-                  rules={field.rules as import("antd/es/form").Rule[]}
+                  rules={field.rules as any}
                 >
                   {field.input}
                 </Form.Item>
@@ -109,6 +125,7 @@ function PartnerLoginContactInfo() {
                 </Button>
               </Form.Item>
             </Form>
+
             <div className="text-center mt-4">
               <span className="text-sm text-gray-600">
                 Don't have an account?{" "}

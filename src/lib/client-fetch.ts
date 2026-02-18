@@ -5,6 +5,7 @@ export async function clientFetch<T>(
 ): Promise<T> {
 
   const token = typeof window !== "undefined" && window.sessionStorage.getItem("token");
+  
   const isFormData = options.body instanceof FormData;
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
