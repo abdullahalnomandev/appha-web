@@ -1,86 +1,136 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState } from "react";
 import { Plus } from "lucide-react";
-import { Button, Switch } from "antd";
-import OfferModal from "./OfferModal";
+import { App, Button, Switch } from "antd";
 import { ExclusiveOfferInfoModal } from "../exclusiveOffer/ExclusiveOfferInfoModal";
+import { ExclusiveOfferModel } from "../exclusiveOffer/ExclusiveOfferModel";
 import { apiFetch } from "@/lib/api/api-fech";
+import { togglePublishOffer } from "../exclusiveOffer/exclusiveOfferActions";
 
-interface Offer {
+export interface Offer {
   _id: string;
   name: string;
   title: string;
   address: string;
-  location?: {
-    type: "Point";
-    coordinates: [number, number];
-  };
+  location?: { type: "Point"; coordinates: [number, number] };
   image: string[];
   description: string;
-  discount?: {
-    enable: boolean;
-    value: number;
-  };
-  category: {
-    _id: string;
-    name: string;
-  };
+  discount?: { enable: boolean; value: number };
+  category: { _id: string; name: string };
   published: boolean;
   isFavourite?: boolean;
-
-  // legacy / UI-only fields
   status?: "approved" | "pending";
   views?: number;
   redemptions?: number;
 }
 
+// Fetch offers once
+// const fetchOffers = apiFetch("/exclusive-offer?page=1&limit=100", { method: "GET", cache: "force-cache" }, "client");
 
-const fetchOffers = apiFetch('/exclusive-offer?page=1&limit=100', {
-    method: 'GET',
-  },'client')
+export default function ManageOffersTab({ offers, getCategories }: { offers: Offer[], getCategories: any }) {
+  const { message } = App.useApp();
 
-
-const ManageOffersTab = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
-  const existingOffers = use(fetchOffers);
-
-  const offers = (existingOffers as { data?: Offer[] })?.data || [] as Offer[];
-  console.log({offersSS:offers});
-  // ✅ View modal state
   const [viewOpen, setViewOpen] = useState(false);
   const [viewItem, setViewItem] = useState<Offer | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleAdd = () => {
+  // Refresh offers
+  const refreshOffers = async () => {
+    try {
+      const res = (await apiFetch(
+        "/exclusive-offer?page=1&limit=100",
+        { method: "GET", cache: "force-cache" },
+        "client",
+      )) as { data: Offer[] };
+      if (res?.data) {
+        offers.splice(0, offers.length, ...res.data);
+      }
+    } catch (err: any) {
+      message.error(err?.message || "Failed to refresh offers");
+    }
+  };
+
+  const handleAddClick = () => {
     setEditingOffer(null);
     setModalOpen(true);
   };
 
-  const handleEdit = (offer: Offer) => {
+  const handleEditClick = (offer: Offer) => {
     setEditingOffer(offer);
     setModalOpen(true);
   };
 
-  const handleView = (offer: Offer) => {
+  const handleViewClick = (offer: Offer) => {
     setViewItem(offer);
     setViewOpen(true);
   };
 
-  const handleViewClose = () => {
+  const handleCloseView = () => {
     setViewOpen(false);
     setViewItem(null);
   };
 
-  const handleSubmit = (values: any) => {
-    console.log("Submitted values:", values, editingOffer);
-    setModalOpen(false);
+  const handleAddOffer = async (formData: FormData) => {
+    setLoading(true);
+    try {
+      await apiFetch(
+        "/exclusive-offer",
+        { method: "POST", body: formData },
+        "client",
+      );
+      message.success("Offer added successfully");
+      setModalOpen(false);
+      await refreshOffers();
+    } catch (err: any) {
+      message.error(err?.message || "Failed to add offer");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleTogglePublish = (checked: boolean, offer: Offer) => {
-    const updated = offers.map((o) =>
-      o.title === offer.title ? { ...o, published: checked } : o
-    );
+  const handleUpdateOffer = async (id: string, formData: FormData) => {
+    setLoading(true);
+    try {
+      await apiFetch(
+        `/exclusive-offer/${id}`,
+        { method: "PATCH", body: formData },
+        "client",
+      );
+      message.success("Offer updated successfully");
+      setModalOpen(false);
+      await refreshOffers();
+    } catch (err: any) {
+      message.error(err?.message || "Failed to update offer");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // const handleTogglePublish = async (checked: boolean, offer: Offer) => {
+  //   setLoading(true);
+  //   try {
+  //     await apiFetch(
+  //       `/exclusive-offer/${offer._id}`,
+  //       { method: "PATCH", body: JSON.stringify({ published: checked }) },
+  //       "client",
+  //     );
+  //     revalidateTag("exclusive-offer")
+  //     message.success(`Offer ${checked ? "published" : "unpublished"}`);
+  //   } catch (err: any) {
+  //     message.error(err?.message || "Failed to update publish status");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const handleTogglePublish = async (checked: boolean, offer: Offer) => {
+    setLoading(true);
+    message.success(`Offer ${checked ? "published" : "unpublished"}`);
+
+    await togglePublishOffer(offer._id, checked);
+    setLoading(false);
   };
 
   return (
@@ -93,11 +143,10 @@ const ManageOffersTab = () => {
             Create and manage your partnership offers
           </p>
         </div>
-
         <Button
           type="primary"
           size="large"
-          onClick={handleAdd}
+          onClick={handleAddClick}
           className="flex items-center gap-2 font-semibold text-white bg-blue-600 border-blue-600 hover:bg-blue-700"
         >
           <Plus className="w-4 h-4" /> New Offer
@@ -105,61 +154,45 @@ const ManageOffersTab = () => {
       </div>
 
       {/* Offers List */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-base font-bold text-gray-900">Your Offers</h3>
-        <p className="text-sm text-gray-600 mb-4">
-          Manage and update your existing offers
-        </p>
-
-        <div className="space-y-3">
-          {offers?.map((o) => (
-            <div
-              key={o.title}
-              className="p-4 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">
-                    {o.name}
-                  </p>
-
-                  <span
-                    className={`inline-block text-xs font-medium px-2 py-0.5 rounded mt-1 ${
-                      o.status === "approved"
-                        ? "bg-green-100 text-green-700"
-                        : o.status === "pending"
-                        ? "bg-orange-100 text-orange-700"
-                        : "bg-orange-100 text-orange-700"
+      <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-3 max-h-[60vh] overflow-y-auto">
+        {offers.map((o) => (
+          <div
+            key={o._id}
+            className="p-4 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm font-semibold text-gray-900">{o.name}</p>
+                <span
+                  className={`inline-block text-xs font-medium px-2 py-0.5 rounded mt-1 ${o.status === "approved"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-orange-100 text-orange-700"
                     }`}
-                  >
-                    {o.status}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleView(o)}
-                    className="text-xs text-gray-600 cursor-pointer border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 transition"
-                  >
-                    View
-                  </button>
-
-                  <button
-                    onClick={() => handleEdit(o)}
-                    className="text-xs text-blue-600 cursor-pointer border border-blue-300 rounded px-3 py-1 hover:bg-blue-50 transition"
-                  >
-                    Edit
-                  </button>
-                </div>
+                >
+                  {o.status}
+                </span>
               </div>
-
-              {/* Stats + Publish */}
-              <div className="flex justify-between gap-6 mt-3 text-xs text-gray-600">
-                <div className="flex gap-3 items-center">
-                  <span>Total Views: 000 </span>
-                  <span>Redemptions: 000</span>
-                </div>
-
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleViewClick(o)}
+                  className="text-xs text-gray-600 cursor-pointer border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 transition"
+                >
+                  View
+                </button>
+                <button
+                  onClick={() => handleEditClick(o)}
+                  className="text-xs text-blue-600 cursor-pointer border border-blue-300 rounded px-3 py-1 hover:bg-blue-50 transition"
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
+            <div className="flex justify-between gap-6 mt-3 text-xs text-gray-600">
+              <div className="flex gap-3 items-center">
+                <span>Total Views: {o.views || 0}</span>
+                <span>Redemptions: {o.redemptions || 0}</span>
+              </div>
+              {o.status === "approved" && (
                 <div className="flex items-center gap-4">
                   <span className="text-xs text-gray-500 font-medium">
                     Published
@@ -170,28 +203,30 @@ const ManageOffersTab = () => {
                     onChange={(checked) => handleTogglePublish(checked, o)}
                   />
                 </div>
-              </div>
+              )}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
-      {/* Edit/Add Modal */}
-      <OfferModal
+      {/* Modals */}
+      <ExclusiveOfferModel
         open={modalOpen}
+        loading={loading || false}
+        isLoading={loading || false}
+        editEvent={editingOffer as Offer | null}
         onClose={() => setModalOpen(false)}
-        initialValues={editingOffer || undefined}
-        onSubmit={handleSubmit}
+        onAdd={handleAddOffer}
+        onUpdate={handleUpdateOffer}
+        categories={getCategories}
+
       />
 
-      {/* ✅ Exclusive Offer View Modal */}
       <ExclusiveOfferInfoModal
         open={viewOpen}
-        data={viewItem as any}
-        onClose={handleViewClose}
+        data={viewItem as Offer | null}
+        onClose={handleCloseView}
       />
     </div>
   );
-};
-
-export default ManageOffersTab;
+}

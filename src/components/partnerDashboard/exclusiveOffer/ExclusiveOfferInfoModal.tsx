@@ -1,11 +1,11 @@
 import { Carousel, Modal } from "antd";
-import type { ExclusiveOfferType } from ".";
 import { EnvironmentFilled } from "@ant-design/icons";
 import { getImage } from "@/lib/api/api-fech";
+import { Offer } from "../ManageOffer/ManageOffersTab";
 
 export const ExclusiveOfferInfoModal: React.FC<{
   open: boolean;
-  data: ExclusiveOfferType | null;
+  data: Offer | null;
   onClose: () => void;
 }> = ({ open, data, onClose }) => {
   if (!data) return null;
@@ -44,6 +44,7 @@ export const ExclusiveOfferInfoModal: React.FC<{
           overflow: "hidden"
         }
       }}
+      forceRender={true}
       style={{ borderRadius: 16, padding: 0 }}
     >
       <div style={{

@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useState, useRef, useEffect, Suspense } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import { LayoutDashboard, Gift, Users, CalendarCheck } from "lucide-react";
-
-const DashboardTab = React.lazy(() => import("./DashboardTab"));
-const ManageOffersTab = React.lazy(() => import("./ManageOffer/ManageOffersTab"));
-const MemberValidationTab = React.lazy(() => import("./MemberValidationTab"));
-const DailyAttendanceTab = React.lazy(() => import("./DailyAttendanceTab"));
+import { Offer } from "./ManageOffer/ManageOffersTab";
 
 type Tab = "dashboard" | "offers" | "validation" | "attendance";
 
@@ -20,7 +17,25 @@ const tabs = [
 
 const STORAGE_KEY = "partner-dashboard-tab";
 
-export default function PartnerDashboard() {
+// Dynamic imports with loading fallback
+const DashboardTab = dynamic(() => import("./DashboardTab"), {
+  ssr: false,
+  loading: () => <div className="p-6 text-center">Loading Dashboard...</div>,
+});
+const ManageOffersTab = dynamic(() => import("./ManageOffer/ManageOffersTab"), {
+  ssr: false,
+  loading: () => <div className="p-6 text-center">Loading Offers...</div>,
+});
+const MemberValidationTab = dynamic(() => import("./MemberValidationTab"), {
+  ssr: false,
+  loading: () => <div className="p-6 text-center">Loading Validation...</div>,
+});
+const DailyAttendanceTab = dynamic(() => import("./DailyAttendanceTab"), {
+  ssr: false,
+  loading: () => <div className="p-6 text-center">Loading Attendance...</div>,
+});
+
+export default function PartnerDashboard({ offers, getCategories }: { offers?: Offer[], getCategories?: any }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
@@ -28,10 +43,7 @@ export default function PartnerDashboard() {
   // Sync tab from URL or localStorage
   useEffect(() => {
     const queryTab = searchParams?.get("tab") as Tab | null;
-    const storedTab =
-      typeof window !== "undefined"
-        ? (localStorage.getItem(STORAGE_KEY) as Tab | null)
-        : null;
+    const storedTab = typeof window !== "undefined" ? (localStorage.getItem(STORAGE_KEY) as Tab | null) : null;
 
     if (queryTab && tabs.some((t) => t.key === queryTab)) {
       setActiveTab(queryTab);
@@ -62,13 +74,13 @@ export default function PartnerDashboard() {
     }
   }, [activeTab]);
 
-  // Render only the active tab component
+  // Render active tab component
   const renderTabContent = () => {
     switch (activeTab) {
       case "dashboard":
         return <DashboardTab />;
       case "offers":
-        return <ManageOffersTab />;
+        return <ManageOffersTab offers={offers as Offer[]} getCategories={getCategories} />;
       case "validation":
         return <MemberValidationTab />;
       case "attendance":
@@ -110,10 +122,8 @@ export default function PartnerDashboard() {
         ))}
       </div>
 
-      {/* Tab content wrapped in Suspense for lazy loading */}
-      <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
-        {renderTabContent()}
-      </Suspense>
+      {/* Active Tab Content */}
+      <div className="min-h-[300px]">{renderTabContent()}</div>
     </div>
   );
 }
