@@ -4,17 +4,18 @@ import { getCokkiesToken } from "../getToken";
 export async function apiFetch<T>(
     endpoint: string,
     options: RequestInit = {},
+    caller?: 'server' | 'client'
 ): Promise<T> {
 
     // const accessToken =  await getCokkiesToken();
 
     const isFormData = options.body instanceof FormData;
     let accessToken = '';
-    if ( typeof window !== 'undefined') {
+
+    if (caller === 'client' && typeof window !== 'undefined') {
         accessToken = sessionStorage.getItem(authKey) || '';
-    } else {
+    } else if (caller === 'server') {
         accessToken = await getCokkiesToken() || '';
-        console.log('tokenform server', accessToken);
     }
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
@@ -48,7 +49,7 @@ export const getImage = (path: string) => {
         return path;
     }
 
-    const baseUrl = process.env.API_URL?.replace(/\/api\/v1\/?$/, "") ?? "";
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1\/?$/, "") ?? "";
 
     return `${baseUrl}${path}`;
 };

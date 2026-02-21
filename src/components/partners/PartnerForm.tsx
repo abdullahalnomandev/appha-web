@@ -1,19 +1,39 @@
 'use client'
-import { Form, Input, Button, Card } from 'antd';
+
+import { useState } from 'react';
+import { Form, Input, Button, Card, message } from 'antd';
 import { MailOutlined } from '@ant-design/icons';
+import { apiFetch } from '@/lib/api/api-fech';
 
 const { TextArea } = Input;
 
 export default function PartnerForm() {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const msgApi = message;
 
-  const onFinish = (values: any) => {
-    console.log('Form values:', values);
-    // Handle form submission here
+  const onFinish = async (values: any) => {
+    setLoading(true);
+    try {
+      await apiFetch("/partner-request", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+      msgApi.success("Message sent successfully!");
+      form.resetFields();
+    } catch (err: any) {
+      console.error(err);
+      msgApi.error(err.message || "Submission failed!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 ">
+    <div className="min-h-screen flex items-center justify-center p-6">
       <Card className="w-full max-w-4xl shadow-lg rounded-2xl">
         <div className="p-6 md:p-10">
           {/* Icon */}
@@ -48,7 +68,7 @@ export default function PartnerForm() {
                 name="companyName"
                 rules={[{ required: true, message: 'Please enter company name' }]}
               >
-                <Input size="large" placeholder="" className="rounded-md" />
+                <Input size="large" className="rounded-md" />
               </Form.Item>
 
               <Form.Item
@@ -56,7 +76,7 @@ export default function PartnerForm() {
                 name="industry"
                 rules={[{ required: true, message: 'Please enter industry' }]}
               >
-                <Input size="large" placeholder="" className="rounded-md" />
+                <Input size="large" className="rounded-md" />
               </Form.Item>
             </div>
 
@@ -67,7 +87,7 @@ export default function PartnerForm() {
                 name="contactName"
                 rules={[{ required: true, message: 'Please enter contact name' }]}
               >
-                <Input size="large" placeholder="" className="rounded-md" />
+                <Input size="large" className="rounded-md" />
               </Form.Item>
 
               <Form.Item
@@ -78,7 +98,7 @@ export default function PartnerForm() {
                   { type: 'email', message: 'Please enter a valid email' },
                 ]}
               >
-                <Input size="large" placeholder="" className="rounded-md" />
+                <Input size="large" className="rounded-md" />
               </Form.Item>
             </div>
 
@@ -89,7 +109,7 @@ export default function PartnerForm() {
                 name="contactPhone"
                 rules={[{ required: true, message: 'Please enter contact phone' }]}
               >
-                <Input size="large" placeholder="" className="rounded-md" />
+                <Input size="large" className="rounded-md" />
               </Form.Item>
 
               <Form.Item
@@ -100,7 +120,7 @@ export default function PartnerForm() {
                   { type: 'url', message: 'Please enter a valid URL' },
                 ]}
               >
-                <Input size="large" placeholder="" className="rounded-md" />
+                <Input size="large" className="rounded-md" />
               </Form.Item>
             </div>
 
@@ -110,13 +130,19 @@ export default function PartnerForm() {
               name="message"
               rules={[{ required: true, message: 'Please enter your message' }]}
             >
-              <TextArea rows={5} placeholder="" className="rounded-md" />
+              <TextArea rows={5} className="rounded-md" />
             </Form.Item>
 
             {/* Submit Button */}
             <Form.Item className="mb-0">
               <div className="flex justify-end pt-4">
-                <Button type="primary" size="large" htmlType="submit" className="px-8 h-12 rounded-md font-medium">
+                <Button
+                  type="primary"
+                  size="large"
+                  htmlType="submit"
+                  className="px-8 h-12 rounded-md font-medium"
+                  loading={loading}
+                >
                   Submit Partnership Enquiry
                 </Button>
               </div>

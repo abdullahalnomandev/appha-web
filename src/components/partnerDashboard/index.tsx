@@ -1,13 +1,13 @@
-// components/PartnerDashboard.tsx
 "use client";
 
-import { useState, useRef, useEffect, Suspense } from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LayoutDashboard, Gift, Users, CalendarCheck } from "lucide-react";
-import DashboardTab from "./DashboardTab";
-import ManageOffersTab from "./ManageOffer/ManageOffersTab";
-import MemberValidationTab from "./MemberValidationTab";
-import DailyAttendanceTab from "./DailyAttendanceTab";
+
+const DashboardTab = React.lazy(() => import("./DashboardTab"));
+const ManageOffersTab = React.lazy(() => import("./ManageOffer/ManageOffersTab"));
+const MemberValidationTab = React.lazy(() => import("./MemberValidationTab"));
+const DailyAttendanceTab = React.lazy(() => import("./DailyAttendanceTab"));
 
 type Tab = "dashboard" | "offers" | "validation" | "attendance";
 
@@ -20,8 +20,7 @@ const tabs = [
 
 const STORAGE_KEY = "partner-dashboard-tab";
 
-// Wrap the tab logic in a separate component to use Suspense safely
-function PartnerDashboardTabs() {
+export default function PartnerDashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
@@ -29,9 +28,10 @@ function PartnerDashboardTabs() {
   // Sync tab from URL or localStorage
   useEffect(() => {
     const queryTab = searchParams?.get("tab") as Tab | null;
-    const storedTab = typeof window !== "undefined"
-      ? (localStorage.getItem(STORAGE_KEY) as Tab | null)
-      : null;
+    const storedTab =
+      typeof window !== "undefined"
+        ? (localStorage.getItem(STORAGE_KEY) as Tab | null)
+        : null;
 
     if (queryTab && tabs.some((t) => t.key === queryTab)) {
       setActiveTab(queryTab);
@@ -58,15 +58,28 @@ function PartnerDashboardTabs() {
     const index = tabs.findIndex((t) => t.key === activeTab);
     const activeBtn = buttonRefs.current[index];
     if (activeBtn) {
-      setPillStyle({
-        width: activeBtn.offsetWidth,
-        left: activeBtn.offsetLeft,
-      });
+      setPillStyle({ width: activeBtn.offsetWidth, left: activeBtn.offsetLeft });
     }
   }, [activeTab]);
 
+  // Render only the active tab component
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "dashboard":
+        return <DashboardTab />;
+      case "offers":
+        return <ManageOffersTab />;
+      case "validation":
+        return <MemberValidationTab />;
+      case "attendance":
+        return <DailyAttendanceTab />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="max-w-[1140px] mx-auto px-4 py-6">
+    <div className="max-w-285 mx-auto px-4 py-6">
       {/* Tabs */}
       <div
         ref={containerRef}
@@ -83,12 +96,12 @@ function PartnerDashboardTabs() {
         {tabs.map((tab, index) => (
           <button
             key={tab.key}
-            ref={(el) => { buttonRefs.current[index] = el; }}
+            ref={(el) => {
+              buttonRefs.current[index] = el;
+            }}
             onClick={() => setActiveTab(tab.key as Tab)}
             className={`relative z-10 cursor-pointer flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300 ${
-              activeTab === tab.key
-                ? "text-black"
-                : "text-gray-500 hover:text-gray-900"
+              activeTab === tab.key ? "text-black" : "text-gray-500 hover:text-gray-900"
             }`}
           >
             <tab.icon className="w-4 h-4" />
@@ -97,20 +110,10 @@ function PartnerDashboardTabs() {
         ))}
       </div>
 
-      {/* Tab content */}
-      {activeTab === "dashboard" && <DashboardTab />}
-      {activeTab === "offers" && <ManageOffersTab />}
-      {activeTab === "validation" && <MemberValidationTab />}
-      {activeTab === "attendance" && <DailyAttendanceTab />}
+      {/* Tab content wrapped in Suspense for lazy loading */}
+      <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
+        {renderTabContent()}
+      </Suspense>
     </div>
-  );
-}
-
-// Wrap the whole tab component in Suspense for useSearchParams
-export default function PartnerDashboard() {
-  return (
-    <Suspense fallback={<div className="p-6">Loading dashboard...</div>}>
-      <PartnerDashboardTabs />
-    </Suspense>
   );
 }

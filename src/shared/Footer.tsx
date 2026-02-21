@@ -36,11 +36,11 @@ const Footer = () => {
           </div>
 
           {/* Quick Links, Legal, Contact Section */}
-          <div className="flex flex-col lg:flex-row justify-between items-start gap-10 lg:gap-[121px] w-full lg:w-[947px]">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-10 lg:gap-30.25 w-full lg:w-236.75">
             {/* Quick Links */}
-            <div className="flex flex-col gap-6 w-full lg:w-[233px]">
+            <div className="flex flex-col gap-6 w-full lg:w-58.25">
               <h4
-                className="text-xl font-semibold leading-[30px] text-[#FEFEFE]"
+                className="text-xl font-semibold leading-7.5 text-[#FEFEFE]"
               >
                 Quick Links
               </h4>
@@ -55,7 +55,7 @@ const Footer = () => {
                 </li>
                 <li>
                   <Link
-                    href="/membership"
+                    href="/membership-application"
                     className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
                     Become a Member
@@ -89,9 +89,9 @@ const Footer = () => {
             </div>
 
             {/* Legal */}
-            <div className="flex flex-col gap-6 w-full lg:w-[201px]">
+            <div className="flex flex-col gap-6 w-full lg:w-50.25">
               <h4
-                className="text-xl font-semibold leading-[30px] text-[#FEFEFE]"
+                className="text-xl font-semibold leading-7.5 text-[#FEFEFE]"
               >
                 Legal
               </h4>
@@ -116,16 +116,16 @@ const Footer = () => {
             </div>
 
             {/* Contact Us */}
-            <div className="flex flex-col gap-6 w-full lg:w-[299px]">
+            <div className="flex flex-col gap-6 w-full lg:w-74.75">
               <h4
-                className="text-xl font-semibold leading-[30px] text-[#FEFEFE]"
+                className="text-xl font-semibold leading-7.5 text-[#FEFEFE]"
               >
                 Contact Us
               </h4>
               <ul className="flex flex-col gap-5">
                 <li className="flex items-center gap-2">
                   <Mail
-                    className="w-6 h-6 text-[#FE9800] flex-shrink-0"
+                    className="w-6 h-6 text-[#FE9800] shrink-0"
                     strokeWidth={1.5}
                   />
                   <a
@@ -137,7 +137,7 @@ const Footer = () => {
                 </li>
                 <li className="flex items-center gap-2">
                   <Phone
-                    className="w-6 h-6 text-[#FE9800] flex-shrink-0"
+                    className="w-6 h-6 text-[#FE9800] shrink-0"
                     strokeWidth={1.5}
                   />
                   <a
@@ -149,7 +149,7 @@ const Footer = () => {
                 </li>
                 <li className="flex items-start gap-2">
                   <MapPin
-                    className="w-6 h-6 text-[#FE9800] flex-shrink-0 mt-0.5"
+                    className="w-6 h-6 text-[#FE9800] shrink-0 mt-0.5"
                     strokeWidth={2}
                   />
                   <div
@@ -169,7 +169,7 @@ const Footer = () => {
       <div className="w-full h-px bg-[#343F52]"></div>
       <div className="flex flex-col items-center gap-6 pt-6">
         <p
-          className="text-sm leading-[21px] text-center text-[#B5B5B5]"
+          className="text-sm leading-5.25 text-center text-[#B5B5B5]"
         >
           © {currentYear} ALPHA - Automotive Leaders and Professionals Hub
           Association. All rights reserved.

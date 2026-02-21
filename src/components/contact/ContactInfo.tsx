@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { use, useState } from "react";
 import { Form, Input, Button, Row, Col, Card, message } from "antd";
 import {
   MailOutlined,
@@ -8,12 +8,22 @@ import {
   EnvironmentOutlined,
 } from "@ant-design/icons";
 import { clientFetch } from "@/lib/client-fetch";
+import { apiFetch, getImage } from "@/lib/api/api-fech";
 const { TextArea } = Input;
+
+const contactUs = apiFetch("/contact-us?page=1&limit=10", {
+  method: "GET",
+  cache: "no-store",
+}, 'client');
 
 function ContactInfo() {
   const [form] = Form.useForm();
   const [msgApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
+
+
+  const getContactUs = use(contactUs);
+
 
   // Contact cards configuration
   const contactCards = [
@@ -71,7 +81,7 @@ function ContactInfo() {
     {
       name: "memberShipId",
       label: "Membership Number",
-      rules: [{ required: true, message: "Please enter your membership number" }],
+      rules: [{ message: "Please enter your membership number" }],
       input: (
         <Input
           placeholder="Enter your membership number"
@@ -128,7 +138,7 @@ function ContactInfo() {
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      await clientFetch("/contact-form/create-form", {
+      await apiFetch("/contact-form", {
         method: "POST",
         body: JSON.stringify(values),
       });
@@ -147,7 +157,44 @@ function ContactInfo() {
       {contextHolder} {/* Required for dynamic AntD messages */}
       <Row gutter={[32, 32]}>
         {/* Left Side - Contact Information */}
-        {/* Left Side - Contact Information */} <Col xs={24} md={10}> <h2 className="text-2xl text-black font-bold mb-6">Get in Touch</h2> {contactCards.map((card, index) => (<Card key={index} variant="borderless" className=" shadow-md rounded-lg mb-5!" style={{ boxShadow: '0px 4px 6px 2px #00000014' }} > <div className="flex items-center gap-3"> {card.icon} <div> <div className="font-medium mb-1">{card.title}</div> {card.content} </div> </div> </Card>))} </Col>
+        {/* Left Side - Contact Information */}
+        <Col xs={24} md={10}>
+          <h2 className="text-2xl text-black font-bold mb-6">
+            Get in Touch
+          </h2>
+
+          {(getContactUs as any)?.data?.map((card: any) => (
+            <Card
+              key={card._id}
+              variant="borderless"
+              className="shadow-md! rounded-lg! mb-5!"
+              style={{ boxShadow: "0px 4px 6px 2px #00000014" }}
+            >
+              <div className="flex items-center gap-3">
+
+                {/* Image instead of icon */}
+                <img
+                  src={getImage(card.image)}
+                  alt={card.title}
+                  className="w-10 h-10 object-contain"
+                />
+
+                <div>
+                  <h4 className="font-semibold text-black">
+                    {card.title}
+                  </h4>
+
+                  {/* Render HTML safely */}
+                  <div
+                    className="text-gray-600"
+                    dangerouslySetInnerHTML={{ __html: card.description }}
+                  />
+                </div>
+              </div>
+            </Card>
+          ))}
+        </Col>
+
 
         {/* Right Side - Contact Form */}
         <Col xs={24} md={14}>

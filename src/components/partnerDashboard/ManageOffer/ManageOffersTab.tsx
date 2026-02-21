@@ -1,44 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { Plus } from "lucide-react";
-import { Button } from "antd";
+import { Button, Switch } from "antd";
 import OfferModal from "./OfferModal";
+import { ExclusiveOfferInfoModal } from "../exclusiveOffer/ExclusiveOfferInfoModal";
+import { apiFetch } from "@/lib/api/api-fech";
 
 interface Offer {
+  _id: string;
+  name: string;
   title: string;
-  status: "approved" | "pending";
-  views: number;
-  redemptions: number;
+  address: string;
+  location?: {
+    type: "Point";
+    coordinates: [number, number];
+  };
+  image: string[];
+  description: string;
+  discount?: {
+    enable: boolean;
+    value: number;
+  };
+  category: {
+    _id: string;
+    name: string;
+  };
+  published: boolean;
+  isFavourite?: boolean;
+
+  // legacy / UI-only fields
+  status?: "approved" | "pending";
+  views?: number;
+  redemptions?: number;
 }
 
-const existingOffers: Offer[] = [
-  {
-    title: "20% Off Premium Detailing",
-    status: "approved",
-    views: 245,
-    redemptions: 34,
-  },
-  {
-    title: "Free Car Wash with Service",
-    status: "pending",
-    views: 0,
-    redemptions: 0,
-  },
-  {
-    title: "VIP Lounge Access",
-    status: "approved",
-    views: 189,
-    redemptions: 67,
-  },
-];
+
+const fetchOffers = apiFetch('/exclusive-offer?page=1&limit=100', {
+    method: 'GET',
+  },'client')
+
 
 const ManageOffersTab = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
+  const existingOffers = use(fetchOffers);
+
+  const offers = (existingOffers as { data?: Offer[] })?.data || [] as Offer[];
+  console.log({offersSS:offers});
+  // ✅ View modal state
+  const [viewOpen, setViewOpen] = useState(false);
+  const [viewItem, setViewItem] = useState<Offer | null>(null);
 
   const handleAdd = () => {
-    setEditingOffer(null); // Add new offer
+    setEditingOffer(null);
     setModalOpen(true);
   };
 
@@ -47,9 +62,25 @@ const ManageOffersTab = () => {
     setModalOpen(true);
   };
 
+  const handleView = (offer: Offer) => {
+    setViewItem(offer);
+    setViewOpen(true);
+  };
+
+  const handleViewClose = () => {
+    setViewOpen(false);
+    setViewItem(null);
+  };
+
   const handleSubmit = (values: any) => {
     console.log("Submitted values:", values, editingOffer);
     setModalOpen(false);
+  };
+
+  const handleTogglePublish = (checked: boolean, offer: Offer) => {
+    const updated = offers.map((o) =>
+      o.title === offer.title ? { ...o, published: checked } : o
+    );
   };
 
   return (
@@ -81,19 +112,23 @@ const ManageOffersTab = () => {
         </p>
 
         <div className="space-y-3">
-          {existingOffers.map((o) => (
+          {offers?.map((o) => (
             <div
               key={o.title}
               className="p-4 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{o.title}</p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {o.name}
+                  </p>
 
                   <span
                     className={`inline-block text-xs font-medium px-2 py-0.5 rounded mt-1 ${
                       o.status === "approved"
                         ? "bg-green-100 text-green-700"
+                        : o.status === "pending"
+                        ? "bg-orange-100 text-orange-700"
                         : "bg-orange-100 text-orange-700"
                     }`}
                   >
@@ -101,29 +136,59 @@ const ManageOffersTab = () => {
                   </span>
                 </div>
 
-                <button
-                  onClick={() => handleEdit(o)}
-                  className="text-xs text-blue-600 cursor-pointer border border-blue-300 rounded px-3 py-1 hover:bg-blue-50 transition"
-                >
-                  Edit
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleView(o)}
+                    className="text-xs text-gray-600 cursor-pointer border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 transition"
+                  >
+                    View
+                  </button>
+
+                  <button
+                    onClick={() => handleEdit(o)}
+                    className="text-xs text-blue-600 cursor-pointer border border-blue-300 rounded px-3 py-1 hover:bg-blue-50 transition"
+                  >
+                    Edit
+                  </button>
+                </div>
               </div>
 
-              <div className="flex gap-6 mt-3 text-xs text-gray-600">
-                <span>Total Views: {o.views}</span>
-                <span>Redemptions: {o.redemptions}</span>
+              {/* Stats + Publish */}
+              <div className="flex justify-between gap-6 mt-3 text-xs text-gray-600">
+                <div className="flex gap-3 items-center">
+                  <span>Total Views: 000 </span>
+                  <span>Redemptions: 000</span>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <span className="text-xs text-gray-500 font-medium">
+                    Published
+                  </span>
+                  <Switch
+                    size="small"
+                    checked={o.published}
+                    onChange={(checked) => handleTogglePublish(checked, o)}
+                  />
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Edit/Add Modal */}
       <OfferModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         initialValues={editingOffer || undefined}
         onSubmit={handleSubmit}
+      />
+
+      {/* ✅ Exclusive Offer View Modal */}
+      <ExclusiveOfferInfoModal
+        open={viewOpen}
+        data={viewItem as any}
+        onClose={handleViewClose}
       />
     </div>
   );
