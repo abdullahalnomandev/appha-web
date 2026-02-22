@@ -40,7 +40,7 @@ export const ExclusiveOfferModel: React.FC<ExclusiveOfferModelProps> = ({
   const originalImagesRef = useRef<{ [uid: string]: string }>({});
   // const categories = use(fetchCategories);
 
- console.log('categories',categories);
+  console.log('categories', categories);
   // Populate form on edit
   useEffect(() => {
     if (editEvent) {
@@ -113,6 +113,8 @@ export const ExclusiveOfferModel: React.FC<ExclusiveOfferModelProps> = ({
     return true; // allow Ant Upload to remove from UI
   };
 
+  console.log('open', open);
+
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
@@ -141,8 +143,12 @@ export const ExclusiveOfferModel: React.FC<ExclusiveOfferModelProps> = ({
         await onUpdate(editEvent._id, formData);
       } else {
         await onAdd(formData);
+        form.resetFields();
+        setFileList([]);
+        setHtml("");
+        setDiscountEnable(false);
+        setRemovedFiles([]);
       }
-
 
       if (!open) {
         // Reset after submit
@@ -167,6 +173,7 @@ export const ExclusiveOfferModel: React.FC<ExclusiveOfferModelProps> = ({
       onOk={handleSubmit}
       confirmLoading={loading || false}
       okText={editEvent ? "Update" : "Create"}
+      destroyOnHidden
       width={700}
     // destroyOnHidden  
     >

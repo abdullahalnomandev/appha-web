@@ -78,11 +78,11 @@ export default function PartnerDashboard({ offers, getCategories }: { offers?: O
   const renderTabContent = () => {
     switch (activeTab) {
       case "dashboard":
-        return <DashboardTab />;
+        return <DashboardTab offers={offers as Offer[]} />;
       case "offers":
         return <ManageOffersTab offers={offers as Offer[]} getCategories={getCategories} />;
       case "validation":
-        return <MemberValidationTab />;
+        return <MemberValidationTab  />;
       case "attendance":
         return <DailyAttendanceTab />;
       default:
@@ -123,7 +123,7 @@ export default function PartnerDashboard({ offers, getCategories }: { offers?: O
       </div>
 
       {/* Active Tab Content */}
-      <div className="min-h-[300px]">{renderTabContent()}</div>
+      <div className="min-h-75">{renderTabContent()}</div>
     </div>
   );
 }

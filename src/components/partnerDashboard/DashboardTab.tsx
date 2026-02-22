@@ -1,6 +1,7 @@
 "use client";
 
 import { TrendingUp, CheckCircle, Gift, Clock } from "lucide-react";
+import { Offer } from "./ManageOffer/ManageOffersTab";
 
 const stats = [
   {
@@ -33,28 +34,8 @@ const stats = [
   },
 ];
 
-const recentOffers = [
-  {
-    title: "20% Off Premium Detailing",
-    views: 245,
-    redemptions: 34,
-    status: "approved",
-  },
-  {
-    title: "Free Car Wash with Service",
-    views: 0,
-    redemptions: 0,
-    status: "pending",
-  },
-  {
-    title: "VIP Lounge Access",
-    views: 189,
-    redemptions: 67,
-    status: "approved",
-  },
-];
 
-export default function DashboardTab() {
+export default function DashboardTab({ offers }: { offers: Offer[] }) {
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
@@ -94,26 +75,25 @@ export default function DashboardTab() {
         </p>
 
         <div className="space-y-3">
-          {recentOffers.map((o) => (
+          {(offers.slice(0, 3)).map((o) => (
             <div
-              key={o.title}
+              key={o._id}
               className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-colors"
             >
               <div>
                 <p className="text-sm font-semibold text-gray-900">
-                  {o.title}
+                  {o.name}
                 </p>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Views: {o.views} · Redemptions: {o.redemptions}
+                  Views: 0000 · Redemptions: 0000
                 </p>
               </div>
 
               <span
-                className={`text-xs font-medium px-2.5 py-1 rounded ${
-                  o.status === "approved"
-                    ? "bg-emerald-100 text-emerald-700"
-                    : "bg-orange-100 text-orange-700"
-                }`}
+                className={`inline-block text-xs font-medium px-2 py-0.5 rounded mt-1 ${o.status === "approved"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-orange-100 text-orange-700"
+                  }`}
               >
                 {o.status}
               </span>

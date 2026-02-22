@@ -41,3 +41,7 @@ export async function addExclusiveOffer(formData: FormData) {
     return { success: false, error: err?.message || "Failed to add offer" };
   }
 }
+
+export const revalidateTagType = async (tag: string) => {
+  await revalidateTag(tag);
+};

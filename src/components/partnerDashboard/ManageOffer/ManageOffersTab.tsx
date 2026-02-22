@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { App, Button, Switch } from "antd";
+import { Button, message, Switch } from "antd";
 import { ExclusiveOfferInfoModal } from "../exclusiveOffer/ExclusiveOfferInfoModal";
 import { ExclusiveOfferModel } from "../exclusiveOffer/ExclusiveOfferModel";
 import { apiFetch } from "@/lib/api/api-fech";
-import { togglePublishOffer } from "../exclusiveOffer/exclusiveOfferActions";
+import { revalidateTagType, togglePublishOffer } from "../exclusiveOffer/exclusiveOfferActions";
 
 export interface Offer {
   _id: string;
@@ -29,8 +29,6 @@ export interface Offer {
 // const fetchOffers = apiFetch("/exclusive-offer?page=1&limit=100", { method: "GET", cache: "force-cache" }, "client");
 
 export default function ManageOffersTab({ offers, getCategories }: { offers: Offer[], getCategories: any }) {
-  const { message } = App.useApp();
-
   const [modalOpen, setModalOpen] = useState(false);
   const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
   const [viewOpen, setViewOpen] = useState(false);
@@ -38,20 +36,20 @@ export default function ManageOffersTab({ offers, getCategories }: { offers: Off
   const [loading, setLoading] = useState(false);
 
   // Refresh offers
-  const refreshOffers = async () => {
-    try {
-      const res = (await apiFetch(
-        "/exclusive-offer?page=1&limit=100",
-        { method: "GET", cache: "force-cache" },
-        "client",
-      )) as { data: Offer[] };
-      if (res?.data) {
-        offers.splice(0, offers.length, ...res.data);
-      }
-    } catch (err: any) {
-      message.error(err?.message || "Failed to refresh offers");
-    }
-  };
+  // const refreshOffers = async () => {
+  //   try {
+  //     const res = (await apiFetch(
+  //       "/exclusive-offer?page=1&limit=100",
+  //       { method: "GET", cache: "force-cache" },
+  //       "client",
+  //     )) as { data: Offer[] };
+  //     if (res?.data) {
+  //       offers.splice(0, offers.length, ...res.data);
+  //     }
+  //   } catch (err: any) {
+  //     message.error(err?.message || "Failed to refresh offers");
+  //   }
+  // };
 
   const handleAddClick = () => {
     setEditingOffer(null);
@@ -83,7 +81,8 @@ export default function ManageOffersTab({ offers, getCategories }: { offers: Off
       );
       message.success("Offer added successfully");
       setModalOpen(false);
-      await refreshOffers();
+      revalidateTagType("exclusive-offer");
+      // await refreshOffers();
     } catch (err: any) {
       message.error(err?.message || "Failed to add offer");
     } finally {
@@ -99,9 +98,10 @@ export default function ManageOffersTab({ offers, getCategories }: { offers: Off
         { method: "PATCH", body: formData },
         "client",
       );
+      revalidateTagType("exclusive-offer");
       message.success("Offer updated successfully");
       setModalOpen(false);
-      await refreshOffers();
+      // await refreshOffers();
     } catch (err: any) {
       message.error(err?.message || "Failed to update offer");
     } finally {
@@ -154,7 +154,7 @@ export default function ManageOffersTab({ offers, getCategories }: { offers: Off
       </div>
 
       {/* Offers List */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-3 max-h-[60vh] overflow-y-auto">
+      <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-3 max-h-[60vh] overflow-auto">
         {offers.map((o) => (
           <div
             key={o._id}
@@ -165,8 +165,8 @@ export default function ManageOffersTab({ offers, getCategories }: { offers: Off
                 <p className="text-sm font-semibold text-gray-900">{o.name}</p>
                 <span
                   className={`inline-block text-xs font-medium px-2 py-0.5 rounded mt-1 ${o.status === "approved"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-orange-100 text-orange-700"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-orange-100 text-orange-700"
                     }`}
                 >
                   {o.status}
