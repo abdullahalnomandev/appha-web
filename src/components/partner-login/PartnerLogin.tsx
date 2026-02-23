@@ -58,16 +58,15 @@ function PartnerLoginContactInfo() {
       console.log("res", res);
       if (res && res.data.token) {
         sessionStorage.setItem(authKey, res?.data.token);
-        setAccessTokenToCookie(res?.data.token, { redirect: "/partner-dashboard" });
+        toast.success("Login successful!");
+        router.push("/partner-dashboard");
       }
       form.resetFields();
 
     } catch (err: any) {
       message.error(err.message || "Login failed!");
       // toast.error(err.message || "Login failed!");
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   return (

@@ -1,10 +1,10 @@
 "use client";
 
-import { use, useState, useEffect } from "react";
+import { useState } from "react";
 import { Search, CalendarCheck } from "lucide-react";
-import { toast } from "sonner";
-import { Form, Input, Button, message } from "antd";
+import { message, Form, Input, Button } from "antd";
 import { apiFetch } from "@/lib/api/api-fech";
+import { revalidateTagType } from "./exclusiveOffer/exclusiveOfferActions";
 
 interface Member {
   name: string;
@@ -12,34 +12,22 @@ interface Member {
   userId: string;
 }
 
-const DailyAttendanceTab = () => {
+interface Attendance {
+  checkIn: number;
+  remaining: number;
+}
+
+const DailyAttendanceTab = ({ attendance }: { attendance: Attendance }) => {
   const [search, setSearch] = useState("");
   const [found, setFound] = useState<Member | null>(null);
   const [searching, setSearching] = useState(false);
   const [confirming, setConfirming] = useState(false);
-
-  // 🔹 Attendance stats
-  const [attendanceStatus, setAttendanceStatus] = useState<any>(null);
-
-  // 🔹 Function to fetch attendance stats
-  const fetchAttendanceStatus = async () => {
-    try {
-      const res = await apiFetch("/attendance/overview", { method: "GET", cache: "no-store" }, "client");
-      setAttendanceStatus(res);
-    } catch (error: any) {
-      console.error("Failed to fetch attendance stats:", error.message);
-    }
-  };
-
-  // 🔹 Fetch stats on mount
-  useEffect(() => {
-    fetchAttendanceStatus();
-  }, []);
+  const [attendanceStats, setAttendanceStats] = useState(attendance);
 
   // 🔹 Search member by membership number
   const handleSearch = async () => {
     if (!search.trim()) {
-      toast.error("Please enter membership number");
+      message.error("Please enter membership number");
       return;
     }
 
@@ -47,7 +35,7 @@ const DailyAttendanceTab = () => {
     try {
       const user = await apiFetch(
         `/membership-application?page=1&limit=1&searchTerm=${search}&membershipStatus=active`,
-        { method: "GET", cache: "force-cache" },
+        { method: "GET", cache: "no-store" },
         "client"
       ) as { data: any };
 
@@ -84,10 +72,18 @@ const DailyAttendanceTab = () => {
       );
 
       message.success("Attendance confirmed!");
+
+      // 🔹 Immediately refetch attendance overview (client-side)
+      const updated = await apiFetch(
+        `/attendance/overview`,
+        { method: "GET", cache: "no-store" },
+        "client"
+      );
+
+      setAttendanceStats((updated as any).data);
+      revalidateTagType("attendance");
       setFound(null);
       setSearch("");
-      // 🔹 Refresh stats after confirming
-      fetchAttendanceStatus();
     } catch (error: any) {
       message.error(error.message || "Failed to confirm attendance");
     } finally {
@@ -98,7 +94,7 @@ const DailyAttendanceTab = () => {
   const stats = [
     {
       label: "Today's Check-ins",
-      value: attendanceStatus?.data?.checkIn || 0,
+      value: attendanceStats?.checkIn || 0,
       sub: "Resets automatically at midnight",
       color: "text-yellow-400",
     },
@@ -110,7 +106,7 @@ const DailyAttendanceTab = () => {
     },
     {
       label: "Remaining",
-      value: attendanceStatus?.data?.remaining || 0,
+      value: attendanceStats?.remaining || 0,
       sub: "Available slots today",
       color: "text-green-400",
     },
@@ -150,7 +146,13 @@ const DailyAttendanceTab = () => {
             </Form.Item>
 
             <Form.Item className="mb-0">
-              <Button type="primary" size="large" htmlType="submit" icon={<Search size={16} />} loading={searching}>
+              <Button
+                type="primary"
+                size="large"
+                htmlType="submit"
+                icon={<Search size={16} />}
+                loading={searching}
+              >
                 Search
               </Button>
             </Form.Item>
@@ -175,7 +177,13 @@ const DailyAttendanceTab = () => {
               </div>
             </div>
 
-            <Button type="primary" size="large" block onClick={handleConfirm} loading={confirming}>
+            <Button
+              type="primary"
+              size="large"
+              block
+              onClick={handleConfirm}
+              loading={confirming}
+            >
               Confirm Attendance
             </Button>
           </div>

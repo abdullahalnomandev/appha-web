@@ -6,16 +6,14 @@ import alpha from "@/assets/image 2.png";
 import Image from "next/image";
 import { Button } from "antd";
 import { authKey } from "@/constants/storageKey";
-import { removeAccessTokenToCookie } from "@/services/action.setTokenToCookie";
+import { removeAccessTokenToCookie } from "@/services/removeTokeknFromCookie";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
 
     sessionStorage.removeItem(authKey);
-    removeAccessTokenToCookie({
-      redirect: "/",
-    });
+    removeAccessTokenToCookie({ redirect: "/" });
 
   }
   return (

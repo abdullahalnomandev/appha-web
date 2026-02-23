@@ -1,5 +1,7 @@
 import { authKey } from "@/constants/storageKey";
 import { getCokkiesToken } from "../getToken";
+import { redirect } from "next/navigation";
+import { removeAccessTokenToCookie } from "@/services/removeTokeknFromCookie";
 
 export async function apiFetch<T>(
     endpoint: string,
@@ -20,13 +22,24 @@ export async function apiFetch<T>(
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
         ...options,
+        credentials: 'include',
         headers: {
             ...(isFormData ? {} : { "Content-Type": "application/json" }),
             ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
             ...options.headers,
         },
-        cache: "no-store",
+        cache: "no-cache",
     });
+
+    // Handle 401 Session Expired gracefully
+    if (res.status === 401) {
+        if (typeof window !== "undefined") {
+            // Client side
+            window.location.href = "/partner-login";
+            return Promise.reject(); // stop execution
+
+        }
+    }
 
     if (!res.ok) {
         const errorData = await res.json().catch(() => null);

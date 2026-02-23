@@ -4,43 +4,47 @@ import { Offer } from "@/components/partnerDashboard/ManageOffer/ManageOffersTab
 import { apiFetch } from "@/lib/api/api-fech";
 
 export default async function PartnerDashboardHomePage() {
-  try {
-    // Query params
-    const offersQuery = new URLSearchParams({ page: "1", limit: "150" });
-    const categoriesQuery = new URLSearchParams({ page: "1", limit: "60" });
+  // Query params
+  const offersQuery = new URLSearchParams({ page: "1", limit: "150" });
+  const categoriesQuery = new URLSearchParams({ page: "1", limit: "60" });
 
-    // Fetch offers from server
-    const exclusiveOffer = await apiFetch<{ data: { data: Offer[] } | null }>(
-      `/exclusive-offer/my-offers?${offersQuery.toString()}`,
-      {
-        method: "GET",
-        // Next.js cache / revalidation
-        next: { tags: ["exclusive-offer"] },
-      },
-      "server"
-    );
+  const exclusiveOffer = await apiFetch<{ data: { data: Offer[] } | null }>(
+    `/exclusive-offer/my-offers?${offersQuery.toString()}`,
+    { method: "GET",cache: "no-cache", next: { tags: ["exclusive-offer"] } },
+    "server"
+  );
 
-    // Fetch categories from server
-    const getCategories = await apiFetch<{ data: any }>(
-      `/category?${categoriesQuery.toString()}`,
-      {
-        method: "GET",
-        next: { tags: ["categories"] },
-      },
-      "server"
-    );
+  const getCategories = await apiFetch<{ data: any }>(
+    `/category?${categoriesQuery.toString()}`,
+    { method: "GET",cache: "no-cache", next: { tags: ["categories"] } },
+    "server"
+  );
 
-    // Default to empty arrays if nothing returned
-    const offers: Offer[] = exclusiveOffer?.data?.data || [];
-    const categories = getCategories?.data || [];
+  const attendanceOverview = await apiFetch<{ data: { remaining: number; checkIn: number } }>(
+    `/attendance/overview`,
+    { method: "GET", next: { tags: ["attendance"] }, cache: "no-cache",},
+    "server"
+  );
 
-    return <PartnerDashboard offers={offers} getCategories={categories} />;
-  } catch (error: any) {
-    console.error("Failed to load Partner Dashboard:", error.message);
-    return (
-      <div className="text-red-500 p-4">
-        Failed to load Partner Dashboard data.
-      </div>
-    );
-  }
+  const redemptionOverview = await apiFetch<{ data: { total_redemption: number; redemption_this_month: number; active_offer: number }; }>(
+    `/redemption/overview`,
+    { method: "GET", next: { tags: ["redemption"] }, cache: "no-cache", },
+    "server"
+  );
+
+  // Default to empty arrays / objects if nothing returned
+  const offers: Offer[] = exclusiveOffer?.data?.data || [];
+  const categories = getCategories?.data || [];
+  const attendance = attendanceOverview?.data;
+  const redemption = redemptionOverview?.data || { total_redemption: 0, redemption_this_month: 0, active_offer: 0 };
+
+  return (
+    <PartnerDashboard
+      offers={offers}
+      getCategories={categories}
+      attendance={attendance}   // separate
+      redemptionOverview={redemption}   // separate
+    />
+  );
+
 }

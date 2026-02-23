@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { LayoutDashboard, Gift, Users, CalendarCheck } from "lucide-react";
 import { Offer } from "./ManageOffer/ManageOffersTab";
@@ -15,51 +15,26 @@ const tabs = [
   { key: "attendance", label: "Daily Attendance", icon: CalendarCheck },
 ];
 
-const STORAGE_KEY = "partner-dashboard-tab";
+// Dynamic imports
+const DashboardTab = dynamic(() => import("./DashboardTab"), { ssr: false });
+const ManageOffersTab = dynamic(() => import("./ManageOffer/ManageOffersTab"), { ssr: false });
+const MemberValidationTab = dynamic(() => import("./MemberValidationTab"), { ssr: false });
+const DailyAttendanceTab = dynamic(() => import("./DailyAttendanceTab"), { ssr: false });
 
-// Dynamic imports with loading fallback
-const DashboardTab = dynamic(() => import("./DashboardTab"), {
-  ssr: false,
-  loading: () => <div className="p-6 text-center">Loading Dashboard...</div>,
-});
-const ManageOffersTab = dynamic(() => import("./ManageOffer/ManageOffersTab"), {
-  ssr: false,
-  loading: () => <div className="p-6 text-center">Loading Offers...</div>,
-});
-const MemberValidationTab = dynamic(() => import("./MemberValidationTab"), {
-  ssr: false,
-  loading: () => <div className="p-6 text-center">Loading Validation...</div>,
-});
-const DailyAttendanceTab = dynamic(() => import("./DailyAttendanceTab"), {
-  ssr: false,
-  loading: () => <div className="p-6 text-center">Loading Attendance...</div>,
-});
-
-export default function PartnerDashboard({ offers, getCategories }: { offers?: Offer[], getCategories?: any }) {
+export default function PartnerDashboard({ offers, getCategories, attendance,redemptionOverview }: { offers?: Offer[], getCategories?: any, attendance?: any ,redemptionOverview?: any}) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+
+  // ✅ Single source of truth for tab
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
 
-  // Sync tab from URL or localStorage
+  // Initialize from URL query param once
   useEffect(() => {
-    const queryTab = searchParams?.get("tab") as Tab | null;
-    const storedTab = typeof window !== "undefined" ? (localStorage.getItem(STORAGE_KEY) as Tab | null) : null;
-
+    const searchParams = new URLSearchParams(window.location.search);
+    const queryTab = searchParams.get("tab") as Tab | null;
     if (queryTab && tabs.some((t) => t.key === queryTab)) {
       setActiveTab(queryTab);
-    } else if (storedTab && tabs.some((t) => t.key === storedTab)) {
-      setActiveTab(storedTab);
-      router.replace(`?tab=${storedTab}`, { scroll: false });
     }
-  }, [searchParams, router]);
-
-  // Update URL & localStorage when tab changes
-  useEffect(() => {
-    if (activeTab) {
-      router.replace(`?tab=${activeTab}`, { scroll: false });
-      localStorage.setItem(STORAGE_KEY, activeTab);
-    }
-  }, [activeTab, router]);
+  }, []);
 
   // Sliding pill
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,17 +49,27 @@ export default function PartnerDashboard({ offers, getCategories }: { offers?: O
     }
   }, [activeTab]);
 
-  // Render active tab component
+  // ✅ Handle tab click
+  const handleTabClick = (tab: Tab) => {
+    setActiveTab(tab);
+
+    // Update URL query without waiting for re-render
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", tab);
+    window.history.replaceState({}, "", url.toString());
+  };
+
+  // Render active tab
   const renderTabContent = () => {
     switch (activeTab) {
       case "dashboard":
-        return <DashboardTab offers={offers as Offer[]} />;
+        return <DashboardTab offers={offers as Offer[]} redemptionOverview={redemptionOverview} />;
       case "offers":
         return <ManageOffersTab offers={offers as Offer[]} getCategories={getCategories} />;
       case "validation":
-        return <MemberValidationTab  />;
+        return <MemberValidationTab />;
       case "attendance":
-        return <DailyAttendanceTab />;
+        return <DailyAttendanceTab attendance={attendance} />;
       default:
         return null;
     }
@@ -111,10 +96,9 @@ export default function PartnerDashboard({ offers, getCategories }: { offers?: O
             ref={(el) => {
               buttonRefs.current[index] = el;
             }}
-            onClick={() => setActiveTab(tab.key as Tab)}
-            className={`relative z-10 cursor-pointer flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300 ${
-              activeTab === tab.key ? "text-black" : "text-gray-500 hover:text-gray-900"
-            }`}
+            onClick={() => handleTabClick(tab.key as Tab)}
+            className={`relative z-10 cursor-pointer flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300 ${activeTab === tab.key ? "text-black" : "text-gray-500 hover:text-gray-900"
+              }`}
           >
             <tab.icon className="w-4 h-4" />
             {tab.label}

@@ -2,39 +2,90 @@
 
 import { useState } from "react";
 import { Search, Users, CheckCircle } from "lucide-react";
-import { toast } from "sonner";
-import { Form, Input, Button } from "antd";
+import { message, Form, Input, Button } from "antd";
+import { apiFetch } from "@/lib/api/api-fech";
+import { revalidateTagType } from "./exclusiveOffer/exclusiveOfferActions";
 
 interface Member {
   name: string;
   id: string;
+  userId: string;
   eligible: boolean;
 }
 
 const MemberValidationTab = () => {
   const [search, setSearch] = useState("");
   const [found, setFound] = useState<Member | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [confirming, setConfirming] = useState(false);
 
-  const handleSearch = () => {
+  // 🔹 Search member via API
+  const handleSearch = async () => {
     if (!search.trim()) {
-      toast.error("Please enter membership number");
+      message.error("Please enter membership number");
       return;
     }
 
-    // Fake search result (replace with API call later)
-    setFound({
-      name: "Ahmed Al Maktoum",
-      id: search,
-      eligible: true,
-    });
+    setSearching(true);
+    try {
+      const res = await apiFetch(
+        `/membership-application?page=1&limit=1&searchTerm=${search}&membershipStatus=active`,
+        { method: "GET", cache: "no-store" },
+        "client"
+      ) as { data: any };
 
-    toast.success("Member found!");
+      if (res.data.length) {
+        setFound({
+          name: res.data[0].name,
+          id: res.data[0].memberShipId,
+          userId: res.data[0]._id,
+          eligible: true, // can be adjusted based on API eligibility field
+        });
+        message.success("Member found!");
+      } else {
+        setFound(null);
+        message.error("No active member found with this number");
+      }
+    } catch (error: any) {
+      message.error(error.message || "Failed to search member");
+    } finally {
+      setSearching(false);
+    }
   };
 
-  const handleConfirm = () => {
-    toast.success("Redemption confirmed successfully!");
-    setFound(null);
-    setSearch("");
+  // 🔹 Confirm redemption via API
+  const handleConfirm = async () => {
+    if (!found) return;
+
+    setConfirming(true);
+    try {
+      await apiFetch(
+        `/redemption`,
+        {
+          method: "POST",
+          body: JSON.stringify({ user: found.userId }),
+        },
+        "client"
+      );
+
+      message.success("Redemption confirmed successfully!");
+
+       await apiFetch(
+        `/attendance/overview`,
+        { method: "GET", cache: "no-store" },
+        "client"
+      );
+
+      setFound(null);
+      setSearch("");
+
+      // Optional: refetch stats or revalidate cache
+      revalidateTagType("redemption");
+    } catch (error: any) {
+      message.error(error.message || "Failed to confirm redemption");
+    } finally {
+      setConfirming(false);
+    }
   };
 
   return (
@@ -48,17 +99,10 @@ const MemberValidationTab = () => {
         privilege redemptions
       </p>
 
-      {/* 🔎 Search Section (Ant Design) */}
-      <Form
-        layout="vertical"
-        onFinish={handleSearch}
-        className="mb-6"
-      >
+      {/* 🔎 Search Section */}
+      <Form layout="vertical" onFinish={handleSearch} className="mb-6">
         <div className="flex gap-3 items-end">
-          <Form.Item
-            label="Membership Number"
-            className="flex-1 mb-0"
-          >
+          <Form.Item label="Membership Number" className="flex-1 mb-0">
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -73,6 +117,7 @@ const MemberValidationTab = () => {
               size="large"
               htmlType="submit"
               icon={<Search size={16} />}
+              loading={searching}
             >
               Search
             </Button>
@@ -114,6 +159,7 @@ const MemberValidationTab = () => {
             size="large"
             block
             onClick={handleConfirm}
+            loading={confirming}
           >
             Confirm Redemption
           </Button>
