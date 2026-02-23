@@ -1,17 +1,17 @@
 "use server";
 
-import { authKey } from "@/constants/storageKey";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { authKey } from "@/constants/storageKey";
 
-export async function  removeAccessTokenToCookie(options?: { redirect?: string }) {
-  const cookieStore = cookies(); // NO await here
+export async function removeAccessTokenToCookie(options?: { redirect?: string }) {
+  const cookieStore = await cookies(); // ✅ await here
 
   // Delete the cookie
-  await (cookieStore as any).delete(authKey, { path: "/" }); // <-- use delete, not set
+  cookieStore.delete(authKey);
 
   // Optional redirect
   if (options?.redirect) {
-    redirect(options?.redirect);
+    redirect(options.redirect);
   }
 }

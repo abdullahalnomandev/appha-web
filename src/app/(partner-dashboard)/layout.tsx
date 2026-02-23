@@ -10,10 +10,10 @@ import { removeAccessTokenToCookie } from "@/services/removeTokeknFromCookie";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 
-  const logout = () => {
+  const logout = async () => {
 
     sessionStorage.removeItem(authKey);
-    removeAccessTokenToCookie({ redirect: "/" });
+    await removeAccessTokenToCookie({ redirect: "/" });
 
   }
   return (

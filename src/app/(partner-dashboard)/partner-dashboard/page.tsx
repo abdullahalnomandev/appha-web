@@ -4,47 +4,56 @@ import { Offer } from "@/components/partnerDashboard/ManageOffer/ManageOffersTab
 import { apiFetch } from "@/lib/api/api-fech";
 
 export default async function PartnerDashboardHomePage() {
-  // Query params
   const offersQuery = new URLSearchParams({ page: "1", limit: "150" });
   const categoriesQuery = new URLSearchParams({ page: "1", limit: "60" });
 
-  const exclusiveOffer = await apiFetch<{ data: { data: Offer[] } | null }>(
-    `/exclusive-offer/my-offers?${offersQuery.toString()}`,
-    { method: "GET",cache: "no-cache", next: { tags: ["exclusive-offer"] } },
-    "server"
-  );
+  const [
+    exclusiveOffer,
+    getCategories,
+    attendanceOverview,
+    redemptionOverview,
+  ] = await Promise.all([
+    apiFetch<{ data: { data: Offer[] } | null }>(
+      `/exclusive-offer/my-offers?${offersQuery.toString()}`,
+      { method: "GET", next: { revalidate: 60 } },
+      "server"
+    ),
 
-  const getCategories = await apiFetch<{ data: any }>(
-    `/category?${categoriesQuery.toString()}`,
-    { method: "GET",cache: "no-cache", next: { tags: ["categories"] } },
-    "server"
-  );
+    apiFetch<{ data: any }>(
+      `/category?${categoriesQuery.toString()}`,
+      { method: "GET", next: { revalidate: 300 } },
+      "server"
+    ),
 
-  const attendanceOverview = await apiFetch<{ data: { remaining: number; checkIn: number } }>(
-    `/attendance/overview`,
-    { method: "GET", next: { tags: ["attendance"] }, cache: "no-cache",},
-    "server"
-  );
+    apiFetch<{ data: { remaining: number; checkIn: number } }>(
+      `/attendance/overview`,
+      { method: "GET", next: { revalidate: 30 } },
+      "server"
+    ),
 
-  const redemptionOverview = await apiFetch<{ data: { total_redemption: number; redemption_this_month: number; active_offer: number }; }>(
-    `/redemption/overview`,
-    { method: "GET", next: { tags: ["redemption"] }, cache: "no-cache", },
-    "server"
-  );
+    apiFetch<{ data: { total_redemption: number; redemption_this_month: number; active_offer: number } }>(
+      `/redemption/overview`,
+      { method: "GET", next: { revalidate: 30 } },
+      "server"
+    ),
+  ]);
 
-  // Default to empty arrays / objects if nothing returned
   const offers: Offer[] = exclusiveOffer?.data?.data || [];
   const categories = getCategories?.data || [];
   const attendance = attendanceOverview?.data;
-  const redemption = redemptionOverview?.data || { total_redemption: 0, redemption_this_month: 0, active_offer: 0 };
+  const redemption =
+    redemptionOverview?.data || {
+      total_redemption: 0,
+      redemption_this_month: 0,
+      active_offer: 0,
+    };
 
   return (
     <PartnerDashboard
       offers={offers}
       getCategories={categories}
-      attendance={attendance}   // separate
-      redemptionOverview={redemption}   // separate
+      attendance={attendance}
+      redemptionOverview={redemption}
     />
   );
-
 }

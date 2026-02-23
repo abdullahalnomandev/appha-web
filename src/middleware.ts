@@ -12,7 +12,6 @@ export async function middleware(request: NextRequest) {
     try {
       // Verify token using jose
       const decoded = await jwtVerify(token, new TextEncoder().encode(secret));
-      console.log("Decoded token:", decoded.payload);
       isTokenValid = true;
     } catch (err) {
       console.log("JWT verification failed:", err);
