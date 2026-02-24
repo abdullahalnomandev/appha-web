@@ -172,8 +172,11 @@ export default function MemberApplicationForm() {
   const [emiratesIdFile, setEmiratesIdFile] = useState<UploadFile[]>([]);
   const [passportFile, setPassportFile] = useState<UploadFile[]>([]);
   const [phone, setPhone] = useState("");
-
-  console.log({emiratesIdFile, passportFile});
+  // File uploads with preview
+  const [profileImageFile, setProfileImageFile] = useState<UploadFile[]>([]);
+  const [profilePreview, setProfilePreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  console.log({ emiratesIdFile, passportFile });
 
   // Client-side fetch using `use` (Suspense)
   const membershipType = use(membershipPromise);
@@ -200,7 +203,20 @@ export default function MemberApplicationForm() {
   // };
 
 
+  const handleProfileUpload = (file: UploadFile) => {
+    setProfileImageFile([file]);
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file as any);
+    reader.onload = () => setProfilePreview(reader.result as string);
+
+    return false;
+  };
+
+
+
   const onFinish = async (values: any) => {
+    setLoading(true);
     try {
       const formData = new FormData();
 
@@ -227,7 +243,8 @@ export default function MemberApplicationForm() {
       formData.append("confirmAcknowledgement", values.confirmAcknowledgement);
       formData.append("confirmAgreement", values.confirmAgreement);
 
-      if (!! emiratesIdFile[0]) {
+      if (profileImageFile[0]) formData.append("profileImage", profileImageFile[0] as any);
+      if (!!emiratesIdFile[0]) {
         formData.append(
           "image",
           emiratesIdFile[0] as any
@@ -240,7 +257,7 @@ export default function MemberApplicationForm() {
           passportFile[0] as any
         );
       }
-      
+
 
       const response = await clientFetch("/membership-application/crate-from", {
         method: "POST",
@@ -250,12 +267,15 @@ export default function MemberApplicationForm() {
 
       if (!!response) {
         message?.success("Application submitted successfully!");
+        setLoading(false);
         form.resetFields();
         setEmiratesIdFile([]);
         setPassportFile([]);
+
       }
     } catch (err) {
       toast.error(((err as Error)?.message) || "Submission failed!");
+      setLoading(false);
     }
   };
 
@@ -269,6 +289,49 @@ export default function MemberApplicationForm() {
           onFinish={onFinish}
           autoComplete="off"
         >
+          {/* Profile Image */}
+          <SectionHeader title="Profile Image" />
+          <Row gutter={16}>
+            <Col xs={24} md={12}>
+              <Form.Item
+                label="Profile Image"
+                name="profileImage"
+                rules={[{ required: true, message: "Profile Image is required" }]}
+              >
+                <Upload
+                  className="relative w-40 h-40 mx-auto rounded-full border-2 bg-[#F1F1F1]! border-gray-300 hover:border-yellow-400 flex items-center justify-center overflow-hidden transition-all duration-300 cursor-pointer"
+                  beforeUpload={handleProfileUpload}
+                  fileList={profileImageFile}
+                  onRemove={() => {
+                    setProfileImageFile([]);
+                    setProfilePreview(null);
+                  }}
+                  maxCount={1}
+                  accept="image/*"
+                  showUploadList={false} // hides default upload list
+                >
+                  {profilePreview ? (
+                    <div className="relative w-full h-full rounded-full overflow-hidden">
+                      <img
+                        src={profilePreview}
+                        alt="Profile Preview"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/25 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity rounded-full">
+                        <p className="text-white text-sm">Change</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-center text-gray-400 px-4">
+                      <BsUpload className="text-4xl mb-2" />
+                      <p className="text-sm font-medium">Upload Profile Image</p>
+                    </div>
+                  )}
+                </Upload>
+              </Form.Item>
+            </Col>
+          </Row>
+
           {/* Primary Info */}
           <SectionHeader title="Primary Member Information" />
           <Row gutter={16}>
@@ -468,6 +531,7 @@ export default function MemberApplicationForm() {
           {/* Submit */}
           <div className="pt-8">
             <Button
+              loading={loading}
               type="primary"
               htmlType="submit"
               size="large"

@@ -140,7 +140,7 @@ const DailyAttendanceTab = ({ attendance }: { attendance: Attendance }) => {
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Enter membership number"
+                placeholder="Enter membership number e.g. 00016"
                 size="large"
               />
             </Form.Item>

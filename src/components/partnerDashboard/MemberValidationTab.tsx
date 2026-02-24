@@ -106,7 +106,7 @@ const MemberValidationTab = () => {
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Enter membership number (e.g., M-2024-001)"
+              placeholder="Enter membership number (e.g. 03016)"
               size="large"
             />
           </Form.Item>

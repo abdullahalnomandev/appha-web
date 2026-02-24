@@ -51,7 +51,7 @@ const Navbar = () => {
               >
                 {link.name}
                 <span
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-amber transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out ${
+                  className={`absolute -bottom-1  left-0 w-full h-0.5 bg-amber transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out ${
                     pathname === link.path && link.path !== "/"
                       ? "scale-x-100"
                       : ""
@@ -88,34 +88,6 @@ const Navbar = () => {
               </span>
             </Link>
           </div>
-
-          {/* <div className="hidden sm:flex items-center gap-3">
-            <Link
-              href="/member-signin"
-              className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-amber px-4 py-2 text-sm font-medium text-amber group"
-            >
-              <span className="absolute inset-0 bg-amber scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
-
-              <span className="relative z-10 transition-colors duration-300 group-hover:text-[#050507]">
-                Member Sign In
-              </span>
-
-              <User className="w-4 h-4 relative z-10 transition-colors duration-300 group-hover:text-[#050507]" />
-            </Link>
-
-            <Link
-              href="/partner-login"
-              className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-amber px-4 py-2 text-sm font-medium text-amber group"
-            >
-              <span className="absolute inset-0 bg-amber scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
-
-              <span className="relative z-10 transition-colors duration-300 group-hover:text-[#050507]">
-                Partner Login
-              </span>
-
-              <Users className="w-4 h-4 relative z-10 transition-colors duration-300 group-hover:text-[#050507]" />
-            </Link>
-          </div> */}
 
           <button
             className="md:hidden text-amber cursor-pointer"

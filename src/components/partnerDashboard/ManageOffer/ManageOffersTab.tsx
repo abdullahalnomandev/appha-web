@@ -35,21 +35,7 @@ export default function ManageOffersTab({ offers, getCategories }: { offers: Off
   const [viewItem, setViewItem] = useState<Offer | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Refresh offers
-  // const refreshOffers = async () => {
-  //   try {
-  //     const res = (await apiFetch(
-  //       "/exclusive-offer?page=1&limit=100",
-  //       { method: "GET", cache: "force-cache" },
-  //       "client",
-  //     )) as { data: Offer[] };
-  //     if (res?.data) {
-  //       offers.splice(0, offers.length, ...res.data);
-  //     }
-  //   } catch (err: any) {
-  //     message.error(err?.message || "Failed to refresh offers");
-  //   }
-  // };
+
 
   const handleAddClick = () => {
     setEditingOffer(null);
@@ -109,22 +95,6 @@ export default function ManageOffersTab({ offers, getCategories }: { offers: Off
     }
   };
 
-  // const handleTogglePublish = async (checked: boolean, offer: Offer) => {
-  //   setLoading(true);
-  //   try {
-  //     await apiFetch(
-  //       `/exclusive-offer/${offer._id}`,
-  //       { method: "PATCH", body: JSON.stringify({ published: checked }) },
-  //       "client",
-  //     );
-  //     revalidateTag("exclusive-offer")
-  //     message.success(`Offer ${checked ? "published" : "unpublished"}`);
-  //   } catch (err: any) {
-  //     message.error(err?.message || "Failed to update publish status");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const handleTogglePublish = async (checked: boolean, offer: Offer) => {
     setLoading(true);
     message.success(`Offer ${checked ? "published" : "unpublished"}`);

@@ -11,10 +11,8 @@ import { removeAccessTokenToCookie } from "@/services/removeTokeknFromCookie";
 export default function Layout({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
-
     sessionStorage.removeItem(authKey);
     await removeAccessTokenToCookie({ redirect: "/" });
-
   }
   return (
     <div className="min-h-screen bg-white text-gray-900">
