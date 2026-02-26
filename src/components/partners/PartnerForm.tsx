@@ -22,20 +22,40 @@ export default function PartnerForm() {
   const msgApi = message;
 
   const onFinish = async (values: any) => {
+    if (!phone || phoneError) {
+      setPhoneError("Please enter a valid phone number");
+      return;
+    }
+
     setLoading(true);
+
     try {
+      const formData = new FormData();
+
+      // Append text fields
+      Object.keys(values).forEach((key) => {
+        formData.append(key, values[key]);
+      });
+
+      // Append phone separately
+      formData.append("contactPhone", phone);
+
+      // Append profile image if exists
+      if (profileImageFile[0]) {
+        formData.append("profileImage", profileImageFile[0] as any );
+      }
+
       await apiFetch("/partner-request", {
         method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...values, contactPhone: phone }),
+        body: formData, // FormData automatically sets the correct headers
       });
+
       msgApi.success("Message sent successfully!");
       form.resetFields();
       setPhone("");
       setProfileImageFile([]);
       setProfilePreview(null);
+      setPhoneError(null);
     } catch (err: any) {
       console.error(err);
       msgApi.error(err.message || "Submission failed!");
