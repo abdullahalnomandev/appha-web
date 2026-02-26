@@ -1,7 +1,5 @@
 "use client";
-
 import { Skeleton } from "antd";
-import "antd/dist/reset.css"; // AntD 5+ reset
 
 export default function DashboardTabLoading() {
   return (
@@ -19,7 +17,6 @@ export default function DashboardTabLoading() {
         ))}
       </div>
 
-      {/* Recent Offers Skeleton */}
       <div className="bg-white rounded-lg border border-yellow-200 p-6 shadow-sm">
         <Skeleton.Input style={{ width: 160, height: 20, marginBottom: 8 }} active />
         <Skeleton.Input style={{ width: 220, height: 14, marginBottom: 16 }} active />

@@ -192,10 +192,9 @@ export default function MemberApplicationForm() {
     file: UploadFile,
     setFile: React.Dispatch<React.SetStateAction<UploadFile[]>>
   ) => {
-    setFile([file]);
-    return false;
+    setFile((prev) => [...prev, file]); // append instead of replace
+    return false; // prevent auto upload
   };
-
   // const onFinish = (values: any) => {
   //   const submission = { ...values, mobile: phone };
   //   console.log(submission);
@@ -244,20 +243,8 @@ export default function MemberApplicationForm() {
       formData.append("confirmAgreement", values.confirmAgreement);
 
       if (profileImageFile[0]) formData.append("profileImage", profileImageFile[0] as any);
-      if (!!emiratesIdFile[0]) {
-        formData.append(
-          "image",
-          emiratesIdFile[0] as any
-        );
-      }
-
-      if (passportFile[0]) {
-        formData.append(
-          "logo",
-          passportFile[0] as any
-        );
-      }
-
+      emiratesIdFile.forEach(file => formData.append("image", file as any));
+      passportFile.forEach(file => formData.append("logo", file as any));
 
       const response = await clientFetch("/membership-application/crate-from", {
         method: "POST",
@@ -299,7 +286,7 @@ export default function MemberApplicationForm() {
                 rules={[{ required: true, message: "Profile Image is required" }]}
               >
                 <Upload
-                  className="relative w-40 h-40 mx-auto rounded-full border-2 bg-[#F1F1F1]! border-gray-300 hover:border-yellow-400 flex items-center justify-center overflow-hidden transition-all duration-300 cursor-pointer"
+                  className="relative w-32 h-32 mx-auto rounded-full border-2 bg-[#F1F1F1]! border-gray-300 hover:border-yellow-400 flex items-center justify-center overflow-hidden transition-all duration-300 cursor-pointer"
                   beforeUpload={handleProfileUpload}
                   fileList={profileImageFile}
                   onRemove={() => {
@@ -323,7 +310,7 @@ export default function MemberApplicationForm() {
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center text-center text-gray-400 px-4">
-                      <BsUpload className="text-4xl mb-2" />
+                      <BsUpload className="text-xl mb-2" />
                       <p className="text-sm font-medium">Upload Profile Image</p>
                     </div>
                   )}
@@ -357,7 +344,7 @@ export default function MemberApplicationForm() {
                       defaultCountry="ae"
                       value={phone}
                       onChange={(value) => setPhone(value)}
-                      inputClassName="w-full rounded-md bg-[#F1F1F1] border-none"
+                      inputClassName="w-full rounded-md bg-[#F1F1F1] !h-10 border-none"
                       placeholder="Mobile Number"
                       name="mobile"
                       required
@@ -451,13 +438,12 @@ export default function MemberApplicationForm() {
                   className="w-full"
                 >
                   <Upload.Dragger
+                    multiple
                     className="py-16 md:py-20"
-                    beforeUpload={(file) =>
-                      handleUpload(file, setEmiratesIdFile)
-                    }
+                    beforeUpload={(file) => handleUpload(file, setEmiratesIdFile)}
                     fileList={emiratesIdFile}
-                    onRemove={() => setEmiratesIdFile([])}
-                    maxCount={1}
+                    onRemove={(file) => setEmiratesIdFile(prev => prev.filter(f => f.uid !== file.uid))}
+                    maxCount={2} // or whatever max you want
                   >
                     <div className="flex flex-col items-center justify-center gap-2 h-full">
                       <BsUpload className="text-3xl text-muted-foreground" />
@@ -481,11 +467,12 @@ export default function MemberApplicationForm() {
                   className="w-full"
                 >
                   <Upload.Dragger
+                    multiple
                     className="py-16 md:py-20"
                     beforeUpload={(file) => handleUpload(file, setPassportFile)}
                     fileList={passportFile}
-                    onRemove={() => setPassportFile([])}
-                    maxCount={1}
+                    onRemove={(file) => setPassportFile(prev => prev.filter(f => f.uid !== file.uid))}
+                    maxCount={2} // or whatever max you want
                   >
                     <div className="flex flex-col items-center justify-center gap-2 h-full">
                       <BsUpload className="text-3xl text-muted-foreground" />

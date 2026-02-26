@@ -136,3 +136,7 @@ button.react-international-phone-country-selector-button:focus {
   box-shadow: none !important;
   border-color: #e0b20b !important;
 }
+.react-international-phone-country-selector-button{
+  height: 40px !important;
+  background-color: #F1F1F1 !important;
+}

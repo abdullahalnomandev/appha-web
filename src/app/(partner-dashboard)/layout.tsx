@@ -30,7 +30,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </div>
             </Link>
             <div>
-              <p className="text-base font-bold">Partner Portal</p>
+              <p className="text-base font-bold -pb-4">Partner Portal</p>
               <p className="text-xs text-gray-500">Welcome back, Partner</p>
             </div>
           </div>
@@ -47,13 +47,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Gold line */}
-      <div
-        className="h-[2px]"
-        style={{
-          background:
-            "linear-gradient(90deg, #FCEFAE 0%, #DFBB0B 50%, #FCEFAE 100%)",
-        }}
-      />
+
       {children}
     </div>
   );
