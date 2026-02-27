@@ -81,30 +81,41 @@ export default function DashboardTab({ offers, redemptionOverview }: DashboardTa
         <h3 className="text-base font-bold text-gray-900">Recent Offers</h3>
         <p className="text-sm text-gray-500 mb-4">Your submitted and active offers</p>
 
-        <div className="space-y-3">
-          {offers.slice(0, 3).map((o) => (
-            <div
-              key={o._id}
-              className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-colors"
-            >
-              <div>
-                <p className="text-sm font-semibold text-gray-900">{o.name}</p>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  Views: {o.views || 0} · Redemptions: {o.redemptions || 0}
-                </p>
-              </div>
-              <span
-                className={`inline-block text-xs font-medium px-2 py-0.5 rounded mt-1 ${
-                  o.status === "approved"
+        {
+          !!offers.length ? <div className="space-y-3">
+            {offers.slice(0, 3).map((o) => (
+              <div
+                key={o._id}
+                className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-colors"
+              >
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">{o.name}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Views: {o.views || 0} 
+                    {/* Views: {o.views || 0} · Redemptions: {o.redemptions || 0} */}
+                  </p>
+                </div>
+                <span
+                  className={`inline-block text-xs font-medium px-2 py-0.5 rounded mt-1 ${o.status === "approved"
                     ? "bg-green-100 text-green-700"
                     : "bg-orange-100 text-orange-700"
-                }`}
+                    }`}
+                >
+                  {o.status}
+                </span>
+              </div>
+            ))}
+          </div> :
+            <div className="space-y-3">
+              <div
+                className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-colors"
               >
-                {o.status}
-              </span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">No offers found</p>
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
+        }
       </div>
     </div>
   );

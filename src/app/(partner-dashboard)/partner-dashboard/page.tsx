@@ -15,25 +15,25 @@ export default async function PartnerDashboardHomePage() {
   ] = await Promise.all([
     apiFetch<{ data: { data: Offer[] } | null }>(
       `/exclusive-offer/my-offers?${offersQuery.toString()}`,
-      { method: "GET", next: { revalidate: 60 } },
+      { method: "GET", cache:"force-cache" },
       "server"
     ),
 
     apiFetch<{ data: any }>(
       `/category?${categoriesQuery.toString()}`,
-      { method: "GET", next: { revalidate: 300 } },
+      { method: "GET", cache:"force-cache" },
       "server"
     ),
 
     apiFetch<{ data: { remaining: number; checkIn: number } }>(
       `/attendance/overview`,
-      { method: "GET", next: { revalidate: 30 } },
+      { method: "GET" , cache:"force-cache"},
       "server"
     ),
 
     apiFetch<{ data: { total_redemption: number; redemption_this_month: number; active_offer: number } }>(
       `/redemption/overview`,
-      { method: "GET", next: { revalidate: 30 } },
+      { method: "GET", cache:"force-cache" },
       "server"
     ),
   ]);

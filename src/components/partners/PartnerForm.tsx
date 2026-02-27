@@ -16,23 +16,20 @@ export default function PartnerForm() {
   const [phone, setPhone] = useState("");
   const [profileImageFile, setProfileImageFile] = useState<UploadFile[]>([]);
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
-  const [phoneError, setPhoneError] = useState<string | null>(null);
-  const [touchedPhone, setTouchedPhone] = useState(false);
+
+  // Track if user tried to submit
+  const [submitted, setSubmitted] = useState(false);
 
   const msgApi = message;
 
   const onFinish = async (values: any) => {
-    if (!phone || phoneError) {
-      setPhoneError("Please enter a valid phone number");
-      return;
-    }
+    setSubmitted(false); // reset submitted flag on successful submit
 
     setLoading(true);
-
     try {
       const formData = new FormData();
 
-      // Append text fields
+      // Append all fields
       Object.keys(values).forEach((key) => {
         formData.append(key, values[key]);
       });
@@ -42,26 +39,29 @@ export default function PartnerForm() {
 
       // Append profile image if exists
       if (profileImageFile[0]) {
-        formData.append("profileImage", profileImageFile[0] as any );
+        formData.append("profileImage", profileImageFile[0] as any);
       }
 
       await apiFetch("/partner-request", {
         method: "POST",
-        body: formData, // FormData automatically sets the correct headers
+        body: formData,
       });
 
-      msgApi.success("Message sent successfully!");
+      msgApi.success("Application submitted  successfully!");
       form.resetFields();
       setPhone("");
       setProfileImageFile([]);
       setProfilePreview(null);
-      setPhoneError(null);
     } catch (err: any) {
       console.error(err);
       msgApi.error(err.message || "Submission failed!");
     } finally {
       setLoading(false);
     }
+  };
+
+  const onFinishFailed = () => {
+    setSubmitted(true); // show validation errors after failed submit
   };
 
   const handleProfileUpload = (file: UploadFile) => {
@@ -100,6 +100,7 @@ export default function PartnerForm() {
             form={form}
             layout="vertical"
             onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
             requiredMark
           >
             {/* Profile Image */}
@@ -197,24 +198,13 @@ export default function PartnerForm() {
                 <Form.Item
                   label="Contact Phone"
                   required
-                  validateStatus={phoneError ? "error" : ""}
-                  help={phoneError}
+                  validateStatus={submitted && !phone ? "error" : ""}
+                  help={submitted && !phone ? "Please enter a valid phone number" : ""}
                 >
                   <PhoneInput
                     defaultCountry="ae"
                     value={phone}
-                    onChange={(value) => {
-                      setPhone(value);
-                      setTouchedPhone(true);
-
-                      // live validation
-                      const digits = value.replace(/\D/g, "");
-                      if (digits.length < 7) {
-                        setPhoneError("Phone number is required");
-                      } else {
-                        setPhoneError(null);
-                      }
-                    }}
+                    onChange={(value) => setPhone(value)}
                     inputClassName="w-full !rounded-md !rounded-l-none !bg-white border-none !h-10 px-3"
                     placeholder="Mobile Number"
                   />

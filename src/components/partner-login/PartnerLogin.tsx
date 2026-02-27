@@ -96,7 +96,7 @@ function PartnerLoginContactInfo() {
               form={form}
               layout="vertical"
               onFinish={onFinish}
-              initialValues={{ email: "hiyon20889@bitoini.com", password: "mH8@o@D1gWh8" }}
+              // initialValues={{ email: "hiyon20889@bitoini.com", password: "mH8@o@D1gWh8" }}
               autoComplete="off"
             >
               {formFields.map((field) => (

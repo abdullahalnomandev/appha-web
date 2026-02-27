@@ -254,6 +254,7 @@ export default function MemberApplicationForm() {
 
       if (!!response) {
         message?.success("Application submitted successfully!");
+        setProfilePreview(null);
         setLoading(false);
         form.resetFields();
         setEmiratesIdFile([]);

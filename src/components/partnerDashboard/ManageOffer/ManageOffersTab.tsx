@@ -124,60 +124,71 @@ export default function ManageOffersTab({ offers, getCategories }: { offers: Off
       </div>
 
       {/* Offers List */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-3 max-h-[60vh] overflow-auto">
-        {offers.map((o) => (
-          <div
-            key={o._id}
-            className="p-4 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-semibold text-gray-900">{o.name}</p>
-                <span
-                  className={`inline-block text-xs font-medium px-2 py-0.5 rounded mt-1 ${o.status === "approved"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-orange-100 text-orange-700"
-                    }`}
-                >
-                  {o.status}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleViewClick(o)}
-                  className="text-xs text-gray-600 cursor-pointer border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 transition"
-                >
-                  View
-                </button>
-                <button
-                  onClick={() => handleEditClick(o)}
-                  className="text-xs text-blue-600 cursor-pointer border border-blue-300 rounded px-3 py-1 hover:bg-blue-50 transition"
-                >
-                  Edit
-                </button>
-              </div>
-            </div>
-            <div className="flex justify-between gap-6 mt-3 text-xs text-gray-600">
-              <div className="flex gap-3 items-center">
-                <span>Total Views: {o.views || 0}</span>
-                <span>Redemptions: {o.redemptions || 0}</span>
-              </div>
-              {o.status === "approved" && (
-                <div className="flex items-center gap-4">
-                  <span className="text-xs text-gray-500 font-medium">
-                    Published
-                  </span>
-                  <Switch
-                    size="small"
-                    checked={o.published}
-                    onChange={(checked) => handleTogglePublish(checked, o)}
-                  />
-                </div>
-              )}
-            </div>
+      {
+        !offers.length && (
+          <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-3 max-h-[60vh] overflow-auto">
+            <p className="text-sm text-gray-600">No offers found</p>
           </div>
-        ))}
-      </div>
+        )
+      }
+
+      {
+        !!offers.length && <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-3 max-h-[60vh] overflow-auto">
+          {offers.map((o) => (
+            <div
+              key={o._id}
+              className="p-4 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">{o.name}</p>
+                  <span
+                    className={`inline-block text-xs font-medium px-2 py-0.5 rounded mt-1 ${o.status === "approved"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-orange-100 text-orange-700"
+                      }`}
+                  >
+                    {o.status}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleViewClick(o)}
+                    className="text-xs text-gray-600 cursor-pointer border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 transition"
+                  >
+                    View
+                  </button>
+                  <button
+                    onClick={() => handleEditClick(o)}
+                    className="text-xs text-blue-600 cursor-pointer border border-blue-300 rounded px-3 py-1 hover:bg-blue-50 transition"
+                  >
+                    Edit
+                  </button>
+                </div>
+              </div>
+              <div className="flex justify-between gap-6 mt-3 text-xs text-gray-600">
+                <div className="flex gap-3 items-center">
+                  <span>Total Views: {o.views || 0}</span>
+                  <span>Redemptions: {o.redemptions || 0}</span>
+                </div>
+                {o.status === "approved" && (
+                  <div className="flex items-center gap-4">
+                    <span className="text-xs text-gray-500 font-medium">
+                      Published
+                    </span>
+                    <Switch
+                      size="small"
+                      checked={o.published}
+                      onChange={(checked) => handleTogglePublish(checked, o)}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      }
+
 
       {/* Modals */}
       <ExclusiveOfferModel
