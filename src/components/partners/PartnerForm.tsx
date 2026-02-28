@@ -6,7 +6,7 @@ import { MailOutlined } from '@ant-design/icons';
 import { apiFetch } from '@/lib/api/api-fech';
 import { PhoneInput } from 'react-international-phone';
 import "react-international-phone/style.css";
-import { BsUpload } from 'react-icons/bs';
+// import { BsUpload } from 'react-icons/bs';
 
 const { TextArea } = Input;
 
@@ -14,8 +14,8 @@ export default function PartnerForm() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [phone, setPhone] = useState("");
-  const [profileImageFile, setProfileImageFile] = useState<UploadFile[]>([]);
-  const [profilePreview, setProfilePreview] = useState<string | null>(null);
+  // const [profileImageFile, setProfileImageFile] = useState<UploadFile[]>([]);
+  // const [profilePreview, setProfilePreview] = useState<string | null>(null);
 
   // Track if user tried to submit
   const [submitted, setSubmitted] = useState(false);
@@ -38,9 +38,9 @@ export default function PartnerForm() {
       formData.append("contactPhone", phone);
 
       // Append profile image if exists
-      if (profileImageFile[0]) {
-        formData.append("profileImage", profileImageFile[0] as any);
-      }
+      // if (profileImageFile[0]) {
+      //   formData.append("profileImage", profileImageFile[0] as any);
+      // }
 
       await apiFetch("/partner-request", {
         method: "POST",
@@ -50,8 +50,8 @@ export default function PartnerForm() {
       msgApi.success("Application submitted  successfully!");
       form.resetFields();
       setPhone("");
-      setProfileImageFile([]);
-      setProfilePreview(null);
+      // setProfileImageFile([]);
+      // setProfilePreview(null);
     } catch (err: any) {
       console.error(err);
       msgApi.error(err.message || "Submission failed!");
@@ -64,15 +64,15 @@ export default function PartnerForm() {
     setSubmitted(true); // show validation errors after failed submit
   };
 
-  const handleProfileUpload = (file: UploadFile) => {
-    setProfileImageFile([file]);
+  // const handleProfileUpload = (file: UploadFile) => {
+  //   setProfileImageFile([file]);
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file as any);
-    reader.onload = () => setProfilePreview(reader.result as string);
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(file as any);
+  //   reader.onload = () => setProfilePreview(reader.result as string);
 
-    return false; // prevent auto upload
-  };
+  //   return false; // prevent auto upload
+  // };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
@@ -104,7 +104,7 @@ export default function PartnerForm() {
             requiredMark
           >
             {/* Profile Image */}
-            <Row gutter={16} className="mb-6">
+            {/* <Row gutter={16} className="mb-6">
               <Col xs={24} md={12}>
                 <Form.Item
                   label="Profile Image"
@@ -143,7 +143,7 @@ export default function PartnerForm() {
                   </Upload>
                 </Form.Item>
               </Col>
-            </Row>
+            </Row> */}
 
             {/* Row 1 */}
             <Row gutter={16}>

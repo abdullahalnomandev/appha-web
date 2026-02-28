@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { Search, Users, CheckCircle } from "lucide-react";
 import { message, Form, Input, Button } from "antd";
-import { apiFetch } from "@/lib/api/api-fech";
+import { apiFetch, getImage } from "@/lib/api/api-fech";
 import { revalidateTagType } from "./exclusiveOffer/exclusiveOfferActions";
+import Image from "next/image";
 
 interface Member {
+  profileImage: string;
   name: string;
   id: string;
   userId: string;
@@ -33,9 +35,11 @@ const MemberValidationTab = () => {
         { method: "GET", cache: "no-store" },
         "client"
       ) as { data: any };
+      console.log("res", res.data);
 
       if (res.data.length) {
         setFound({
+          profileImage: res.data[0].profileImage,
           name: res.data[0].name,
           id: res.data[0].memberShipId,
           userId: res.data[0]._id,
@@ -70,7 +74,7 @@ const MemberValidationTab = () => {
 
       message.success("Redemption confirmed successfully!");
 
-       await apiFetch(
+      await apiFetch(
         `/attendance/overview`,
         { method: "GET", cache: "no-store" },
         "client"
@@ -137,8 +141,14 @@ const MemberValidationTab = () => {
         /* Found Member */
         <div className="p-5 rounded-lg bg-gray-50 border border-gray-200">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
-              <Users className="w-6 h-6 text-yellow-500" />
+            <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center overflow-hidden">
+              <Image
+                src={getImage(found?.profileImage)}
+                alt="Profile"
+                width={48}
+                height={48}
+                className="object-cover w-full h-full"
+              />
             </div>
 
             <div>

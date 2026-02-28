@@ -13,6 +13,7 @@ import {
   Row,
   Col,
   message,
+  InputNumber,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import type { UploadFile } from "antd/es/upload/interface";
@@ -176,17 +177,25 @@ export default function MemberApplicationForm() {
   const [profileImageFile, setProfileImageFile] = useState<UploadFile[]>([]);
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
   console.log({ emiratesIdFile, passportFile });
 
   // Client-side fetch using `use` (Suspense)
-  const membershipType = use(membershipPromise);
+  const membershipData = use(membershipPromise);
+  const selectedMembershipType = Form.useWatch("membershipType", form);
 
+  const selectedPlan = membershipData?.data?.find(
+    (plan) => plan.membershipType === selectedMembershipType
+  );
+  const isFamilyEnabled = (selectedPlan as any)?.familyMembershipOptions?.enableFamilyMembers === true;
   // Map membership data for Radio
-  const organizeTypes = membershipType?.data?.map((type) => ({
+  const organizeTypes = membershipData?.data?.map((type) => ({
     value: type._id,
     label: type.title,
     membershipType: type.membershipType,
   }));
+
+
 
   const handleUpload = (
     file: UploadFile,
@@ -211,6 +220,8 @@ export default function MemberApplicationForm() {
 
     return false;
   };
+
+  console.log('membershipData', membershipData);
 
 
 
@@ -246,6 +257,27 @@ export default function MemberApplicationForm() {
       emiratesIdFile.forEach(file => formData.append("image", file as any));
       passportFile.forEach(file => formData.append("logo", file as any));
 
+      // Family Members
+      // Handle Family Data
+      if (values.family) {
+        if (values.family.spouse) {
+          formData.append("spouseName", values.family.spouse.name);
+          formData.append(
+            "spouseDob",
+            values.family.spouse.dob?.toISOString()
+          );
+          formData.append("spouseEmail", values.family.spouse.email);
+          formData.append("spousePhone", values.family.spouse.phone);
+        }
+
+        if (values.family.children?.length > 0) {
+          values.family.children.forEach((child: any, index: number) => {
+            formData.append(`children[${index}][name]`, child.name);
+            formData.append(`children[${index}][age]`, child.age);
+          });
+        }
+      }
+
       const response = await clientFetch("/membership-application/crate-from", {
         method: "POST",
         body: formData,
@@ -266,6 +298,8 @@ export default function MemberApplicationForm() {
       setLoading(false);
     }
   };
+
+
 
 
   return (
@@ -395,13 +429,12 @@ export default function MemberApplicationForm() {
               ))}
             </Row>
           </div>
-
           {/* Membership Type */}
           <div className="pt-6">
             <SectionHeader title="Membership Type" />
             <Suspense fallback={<div>Loading membership types...</div>}>
               <Form.Item name="membershipType" rules={[{ required: true }]}>
-                <Radio.Group className="flex flex-col gap-3">
+                <Radio.Group className="flex flex-col gap-3" >
                   {organizeTypes?.map((t) => (
                     <Radio key={t.value} value={t.membershipType}>
                       {t.label}
@@ -411,6 +444,129 @@ export default function MemberApplicationForm() {
               </Form.Item>
             </Suspense>
           </div>
+
+          {/* Family Details */}
+          {isFamilyEnabled && (
+            <div className="pt-6">
+              <SectionHeader title="Family Details" />
+
+              {/* Spouse */}
+              <h3 className="font-semibold mb-3">Spouse Details</h3>
+
+              <Form.Item
+                name={["family", "spouse", "name"]}
+                label="Spouse Name"
+                rules={[{ required: true }]}
+              >
+                <Input placeholder="Enter spouse name" />
+              </Form.Item>
+
+              <Form.Item
+                name={["family", "spouse", "dob"]}
+                label="Date of Birth"
+                rules={[{ required: true }]}
+              >
+                <DatePicker className="w-full" />
+              </Form.Item>
+
+              <Form.Item
+                name={["family", "spouse", "email"]}
+                label="Email"
+                rules={[{ type: "email", required: true }]}
+              >
+                <Input placeholder="Enter spouse email" />
+              </Form.Item>
+
+              <Form.Item
+                name={["family", "spouse", "phone"]}
+                label="Phone"
+                rules={[{ required: true, message: "Spouse phone is required" }]}
+              >
+                <PhoneInput
+                  defaultCountry="ae"
+                  inputClassName="w-full rounded-md bg-[#F1F1F1] !h-10 border-none"
+                  placeholder="Enter spouse phone"
+                />
+              </Form.Item>
+
+              {/* Children */}
+              <h3 className="font-semibold mt-6 mb-3">Children</h3>
+
+              <Form.List name={["family", "children"]}>
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map((field, index) => (
+                      <div
+                        key={field.key}
+                        className="border border-gray-200! p-4 rounded-md mb-4"
+                      >
+                        <h4 className="mb-3 font-medium">
+                          Child {index + 1}
+                        </h4>
+
+                        {/* Name + Age same row */}
+                        <div className="flex flex-col sm:flex-row gap-4">
+                          <Form.Item
+                            {...field}
+                            name={[field.name, "name"]}
+                            label="Name"
+                            rules={[{ required: true }]}
+                            className="flex-1"
+                          >
+                            <Input placeholder="Enter child name" />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...field}
+                            name={[field.name, "age"]}
+                            label="Age"
+                            rules={[
+                              { required: true },
+                              {
+                                validator: (_, value) =>
+                                  value && value > 18
+                                    ? Promise.reject(
+                                      new Error("Child age must be 18 or below")
+                                    )
+                                    : Promise.resolve(),
+                              },
+                            ]}
+                            className="w-full sm:w-40"
+                          >
+                            <InputNumber
+                              min={0}
+                              max={18}
+                              className="w-full"
+                            />
+                          </Form.Item>
+                        </div>
+
+                        {fields.length > 0 && (
+                          <Button
+                            danger
+                            type="link"
+                            onClick={() => remove(field.name)}
+                          >
+                            Remove
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+
+                    {fields.length < 2 && (
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        block
+                      >
+                        Add Child
+                      </Button>
+                    )}
+                  </>
+                )}
+              </Form.List>
+            </div>
+          )}
 
           {/* Interests */}
           <div className="pt-6">

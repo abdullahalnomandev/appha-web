@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { Search, CalendarCheck } from "lucide-react";
 import { message, Form, Input, Button } from "antd";
-import { apiFetch } from "@/lib/api/api-fech";
+import { apiFetch, getImage } from "@/lib/api/api-fech";
 import { revalidateTagType } from "./exclusiveOffer/exclusiveOfferActions";
+import Image from "next/image";
 
 interface Member {
+  profileImage: string;
   name: string;
   id: string;
   userId: string;
@@ -41,6 +43,7 @@ const DailyAttendanceTab = ({ attendance }: { attendance: Attendance }) => {
 
       if (user.data.length) {
         setFound({
+          profileImage: user.data[0]?.profileImage,
           name: user.data[0]?.name,
           id: user.data[0]?.memberShipId,
           userId: user.data[0]?._id
@@ -167,10 +170,18 @@ const DailyAttendanceTab = ({ attendance }: { attendance: Attendance }) => {
         ) : (
           <div className="p-5 rounded-lg bg-gray-50 border border-gray-200">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
+              {/* <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
                 <CalendarCheck className="w-6 h-6 text-yellow-600" />
+              </div> */}
+              <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center overflow-hidden">
+                <Image
+                  src={getImage(found?.profileImage)}
+                  alt="Profile"
+                  width={48}
+                  height={48}
+                  className="object-cover w-full h-full"
+                />
               </div>
-
               <div>
                 <p className="font-semibold text-gray-900">{found.name}</p>
                 <p className="text-xs text-gray-500">{found.id}</p>

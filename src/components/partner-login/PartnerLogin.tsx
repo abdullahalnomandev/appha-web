@@ -68,7 +68,7 @@ function PartnerLoginContactInfo() {
       message.error(err.message || "Login failed!");
       setLoading(false);
       // toast.error(err.message || "Login failed!");
-    } 
+    }
   };
 
   return (
@@ -96,16 +96,13 @@ function PartnerLoginContactInfo() {
               form={form}
               layout="vertical"
               onFinish={onFinish}
-              // initialValues={{ email: "hiyon20889@bitoini.com", password: "mH8@o@D1gWh8" }}
               autoComplete="off"
             >
               {formFields.map((field) => (
                 <Form.Item
                   key={field.name}
                   label={
-                    <span className="text-base text-gray-700">
-                      {field.label}
-                    </span>
+                    <span className="text-base text-gray-700">{field.label}</span>
                   }
                   name={field.name}
                   rules={field.rules as any}
@@ -113,6 +110,15 @@ function PartnerLoginContactInfo() {
                   {field.input}
                 </Form.Item>
               ))}
+
+              <div className="flex justify-end mb-4">
+                <Link
+                  href="/forgot-password" // আপনার password reset route
+                  className="text-sm! text-yellow-400! font-medium! hover:underline!"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
 
               <Form.Item>
                 <Button

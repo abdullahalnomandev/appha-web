@@ -4,12 +4,12 @@ import ContactInfo from "./PartnerLogin";
 const PartnerLogin = () => {
   return (
     <div>
-      <div className="hidden md:block">
+      {/* <div className="hidden md:block">
         <BannerHeader
           title="Partner Login"
           description="Access Your Partner Portal."
         />
-      </div>
+      </div> */}
       <PartnerLoginContactInfo />
     </div>
   );
