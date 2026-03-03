@@ -11,7 +11,7 @@ export default async function PartnerDashboardHomePage() {
     exclusiveOffer,
     getCategories,
     attendanceOverview,
-    redemptionOverview,
+    redemptionOverview
   ] = await Promise.all([
     apiFetch<{ data: { data: Offer[] } | null }>(
       `/exclusive-offer/my-offers?${offersQuery.toString()}`,
@@ -35,7 +35,7 @@ export default async function PartnerDashboardHomePage() {
       `/redemption/overview`,
       { method: "GET", cache:"force-cache" },
       "server"
-    ),
+    )
   ]);
 
   const offers: Offer[] = exclusiveOffer?.data?.data || [];

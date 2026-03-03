@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { Button, Drawer } from "antd";
 import alpha from "@/assets/image 2.png";
+import { isUserLoggedIn } from "@/services/auth.service";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -20,6 +21,8 @@ const navLinks = [
 const Navbar = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+
+  const isLogin = isUserLoggedIn();
 
   return (
     <header className="bg-[#0c1223] sticky top-0 z-50">
@@ -51,11 +54,10 @@ const Navbar = () => {
               >
                 {link.name}
                 <span
-                  className={`absolute -bottom-1  left-0 w-full h-0.5 bg-amber transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out ${
-                    pathname === link.path && link.path !== "/"
-                      ? "scale-x-100"
-                      : ""
-                  }`}
+                  className={`absolute -bottom-1  left-0 w-full h-0.5 bg-amber transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out ${pathname === link.path && link.path !== "/"
+                    ? "scale-x-100"
+                    : ""
+                    }`}
                 ></span>
               </Link>
             ))}
@@ -64,7 +66,7 @@ const Navbar = () => {
           {/* Auth Buttons */}
           <div className="hidden sm:flex items-center gap-3">
             <Link
-              href="/partner-login"
+              href={`${isLogin ? "/partner-dashboard" : "/partners#partner-login"}`}
               className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-transparent px-4 py-3 text-sm font-medium text-[#D7A859] group"
             >
               {/* Sliding background */}
@@ -72,7 +74,7 @@ const Navbar = () => {
 
               {/* Text */}
               <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
-               Partner Login
+                {isLogin ? "Dashboard" : "Partner Login"}
               </span>
             </Link>
             <Link
@@ -135,9 +137,8 @@ const Navbar = () => {
                 <Link
                   key={link.path}
                   href={link.path}
-                  className={`text-base font-medium transition-colors duration-300 ${
-                    pathname === link.path ? "text-[#D7A859]!" : "text-white!"
-                  }`}
+                  className={`text-base font-medium transition-colors duration-300 ${pathname === link.path ? "text-[#D7A859]!" : "text-white!"
+                    }`}
                   onClick={() => setIsOpen(false)}
                 >
                   {link.name}
@@ -146,13 +147,13 @@ const Navbar = () => {
 
               <div className="mt-4 flex flex-col gap-3">
                 <Link
-                  href="/partner-login"
+                  href={`${isLogin ? "/partner-dashboard" : "/partners#partner-login"}`}
                   className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-transparent px-4 py-3 text-sm font-medium text-[#D7A859] group"
                   onClick={() => setIsOpen(false)}
                 >
                   <span className="absolute inset-0 bg-[#D7A859] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
                   <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
-                    Partner Login
+                    {isLogin ? "Dashboard" : "Partner Login"}
                   </span>
                 </Link>
                 <Link
@@ -177,17 +178,6 @@ const Navbar = () => {
                     Apply Here
                   </span>
                 </Link>
-
-                {/* <Link
-                  href="/partner-login"
-                  className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-transparent px-4 py-3 text-sm font-medium text-[#D7A859] group"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span className="absolute inset-0 bg-[#D7A859] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
-                  <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
-                   Apply Here
-                  </span>
-                </Link> */}
               </div>
             </div>
           </Drawer>

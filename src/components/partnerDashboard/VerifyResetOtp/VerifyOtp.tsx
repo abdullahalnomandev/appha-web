@@ -203,7 +203,8 @@ function VerifyOtpProfessional({ email }: { email: string }) {
             )}
 
             <div className="text-center mt-4">
-              <Link href="/partner-login" className="text-sm text-yellow-400 font-medium hover:underline">
+              <Link href="/partners#partner-login"
+                className="text-sm text-yellow-400 font-medium hover:underline">
                 Back to Login
               </Link>
             </div>

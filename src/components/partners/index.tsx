@@ -1,3 +1,4 @@
+import PartnerLoginContactInfo from "../partner-login/PartnerLogin";
 import BannerHeader from "../ui/BannerHeader";
 import { PartnerBenefit } from "./PartnerBenefit";
 import PartnerForm from "./PartnerForm";
@@ -14,6 +15,8 @@ const Partners = () => {
         title="Partner with ALPHA"
         description="Connect with Automotive Leaders and Professionals."
       />
+      <PartnerLoginContactInfo />
+
       <div className="container-main py-10 space-y-12 text-black mx-auto max-w-[1300px]">
         <h1 className="text-3xl font-extrabold mb-6">Partnering with ALPHA</h1>
         <p className="text-black text-base max-w-[950px]">

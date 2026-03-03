@@ -72,7 +72,7 @@ function PartnerLoginContactInfo() {
   };
 
   return (
-    <div className="py-16 px-5">
+    <div className="py-16 px-5" id='partner-login'>
       <Row gutter={[32, 32]} justify="center">
         <Col xs={24} md={14}>
           <Card
@@ -136,7 +136,7 @@ function PartnerLoginContactInfo() {
             <div className="text-center mt-4">
               <span className="text-sm text-gray-600">
                 Don't have an account?{" "}
-                <Link href="/partners" className="text-yellow-400! font-medium">
+                <Link href="/partners#partner-enquiry" className="text-yellow-400! font-medium">
                   Apply here
                 </Link>
               </span>

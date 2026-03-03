@@ -75,7 +75,7 @@ export default function PartnerForm() {
   // };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-6" id='partner-enquiry'>
       <Card className="w-full max-w-4xl shadow-lg rounded-2xl">
         <div className="p-6 md:p-10">
           {/* Icon */}
