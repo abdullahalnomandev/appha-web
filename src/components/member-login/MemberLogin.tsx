@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { setAccessTokenToCookie } from "@/services/action.setTokenToCookie";
 import { authKey } from "@/constants/storageKey";
 
-function PartnerLoginContactInfo() {
+function MemberLogin() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -47,32 +47,34 @@ function PartnerLoginContactInfo() {
   ];
 
   const onFinish = async (values: { email: string; password: string }) => {
-    setLoading(true);
 
-    try {
-      const res = await apiFetch("/auth/partner-login", {
-        method: "POST",
-        body: JSON.stringify(values),
-      }) as { data: { token: string } } | null;
+    router.push('/member')
+    // setLoading(true);
 
-      console.log("res", res);
-      if (res && res.data.token) {
-        sessionStorage.setItem(authKey, res?.data.token);
-        // setLoading(false);
-        // toast.success("Login successful!");
-        router.push("/partner-dashboard");
-      }
-      form.resetFields();
+    // try {
+    //   const res = await apiFetch("/auth/partner-login", {
+    //     method: "POST",
+    //     body: JSON.stringify(values),
+    //   }) as { data: { token: string } } | null;
 
-    } catch (err: any) {
-      message.error(err.message || "Login failed!");
-      setLoading(false);
-      // toast.error(err.message || "Login failed!");
-    }
+    //   console.log("res", res);
+    //   if (res && res.data.token) {
+    //     sessionStorage.setItem(authKey, res?.data.token);
+    //     // setLoading(false);
+    //     // toast.success("Login successful!");
+    //     router.push("/partner-dashboard");
+    //   }
+    //   form.resetFields();
+
+    // } catch (err: any) {
+    //   message.error(err.message || "Login failed!");
+    //   setLoading(false);
+    //   // toast.error(err.message || "Login failed!");
+    // }
   };
 
   return (
-    <div className="py-16 px-5" id="partner-login">
+    <div className="py-16 px-5" id='member-login'>
       <Row gutter={[32, 32]} justify="center">
         <Col xs={24} md={14}>
           <Card
@@ -136,7 +138,7 @@ function PartnerLoginContactInfo() {
             <div className="text-center mt-4">
               <span className="text-sm text-gray-600">
                 Don't have an account?{" "}
-                <Link href="/partners#partner-enquiry" className="text-yellow-400! font-medium">
+                <Link href="/membership-application#application" className="text-yellow-400! font-medium">
                   Apply here
                 </Link>
               </span>
@@ -148,4 +150,4 @@ function PartnerLoginContactInfo() {
   );
 }
 
-export default PartnerLoginContactInfo;
+export default MemberLogin;

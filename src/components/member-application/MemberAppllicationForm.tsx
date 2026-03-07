@@ -303,7 +303,7 @@ export default function MemberApplicationForm() {
 
 
   return (
-    <div className="min-h-screen bg-white py-8 px-4">
+    <div className="min-h-screen bg-white py-8 px-4" id="application">
       <div className="max-w-5xl mx-auto">
         <Form
           form={form}
@@ -312,8 +312,8 @@ export default function MemberApplicationForm() {
           autoComplete="off"
         >
           {/* Profile Image */}
-          <SectionHeader title="Profile Image" />
-          <Row gutter={16}>
+          {/* <SectionHeader title="Profile Image" /> */}
+          {/* <Row gutter={16}>
             <Col xs={24} md={12}>
               <Form.Item
                 label="Profile Image"
@@ -352,7 +352,7 @@ export default function MemberApplicationForm() {
                 </Upload>
               </Form.Item>
             </Col>
-          </Row>
+          </Row> */}
 
           {/* Primary Info */}
           <SectionHeader title="Primary Member Information" />
