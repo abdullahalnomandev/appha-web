@@ -24,8 +24,8 @@ const tabs = [
     { key: "", label: "Dashboard", icon: LayoutDashboard },
     { key: "partner-directory", label: "Partner Directory", icon: Store },
     { key: "offers", label: "Offers", icon: Gift },
-    { key: "special", label: "Special Offers", icon: Tag },
-    { key: "seasonal", label: "Seasonal", icon: Snowflake },
+    // { key: "special", label: "Special Offers", icon: Tag },
+    // { key: "seasonal", label: "Seasonal", icon: Snowflake },
     { key: "event", label: "Events", icon: Calendar },
     { key: "sponsors", label: "Sponsors", icon: Megaphone },
     { key: "favorites", label: "Favorites", icon: Star },
@@ -85,7 +85,8 @@ export default function MemberLayout({
             <div className="flex flex-1 overflow-hidden">
                 {/* Sidebar */}
                 <aside
-                    className={`border-r border-white/10 bg-navy-light transition-all duration-300 overflow-y-auto ${sidebarOpen ? "w-56" : "w-14"
+                    className={`border-r border-white/10 transition-all duration-300 overflow-y-auto ${sidebarOpen ? "w-56" : "w-14"
+                    // className={`border-r border-white/10 bg-navy-light transition-all duration-300 overflow-y-auto ${sidebarOpen ? "w-56" : "w-14"
                         }`}
                 >
                     <nav className="flex flex-col gap-1 p-2 mt-2">
@@ -125,9 +126,24 @@ export default function MemberLayout({
                 </aside>
 
                 {/* Page Content */}
-                <main className="flex-1 overflow-y-auto overflow-x-hidden p-6">
+                <main className="relative flex-1 overflow-y-auto overflow-x-hidden p-6">
+                    {/* Background image layer */}
+                    <div
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                            backgroundImage: "url('/assets/bg/image-bg.png')",
+                            backgroundSize: "contain",
+                            backgroundPosition: "center",
+                            backgroundRepeat: "no-repeat",
+                            opacity: 0.03,
+                        }}
+                    />
 
-                    {children}</main>
+                    {/* Page content */}
+                    <div className="relative z-10">
+                        {children}
+                    </div>
+                </main>
             </div>
         </div>
     );

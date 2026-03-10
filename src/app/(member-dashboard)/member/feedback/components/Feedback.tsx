@@ -72,7 +72,7 @@ const FeedbackTab = () => {
 
         <button
           type="submit"
-          className="text-sm font-medium px-6 py-2.5 rounded-md text-navy"
+          className="text-sm font-medium px-6 py-2.5 rounded-md text-[black] whitespace-nowrap cursor-pointer"
           style={{ background: "linear-gradient(180deg, #FCEFAE 0%, #DFBB0B 100%)" }}
         >
           <span className="flex items-center gap-2"><MessageSquare className="w-4 h-4" /> Submit Feedback</span>

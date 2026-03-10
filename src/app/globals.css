@@ -184,7 +184,8 @@ button.react-international-phone-country-selector-button:focus {
   }
 
   .bg-navy-light {
-    background-color: hsl(var(--navy-light));
+    background-color:transparent;
+    /* background-color: hsl(var(--navy-light)); */
   }
 
   .border-amber {
