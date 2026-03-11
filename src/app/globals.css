@@ -196,3 +196,76 @@ button.react-international-phone-country-selector-button:focus {
     --tw-ring-color: hsl(var(--amber));
   }
 }
+
+/* MODAL  STYLES **/
+/* Modal background */
+.alpha-partner-modal .ant-modal-content {
+  background-color: hsl(var(--navy)) !important; /* same as navy-light */
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 10px !important;
+  color: white !important;
+}
+
+/* Modal header */
+.alpha-partner-modal .ant-modal-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+/* Title */
+.alpha-partner-modal .ant-modal-title {
+  color: white !important;
+}
+
+/* Close button */
+.alpha-partner-modal .ant-modal-close {
+  color: rgba(255,255,255,0.6) !important;
+}
+
+.alpha-partner-modal .ant-modal-close:hover {
+  color: white !important;
+}
+
+/* Modal body text */
+.alpha-partner-modal .ant-modal-body {
+  color: rgba(255,255,255,0.85);
+}
+
+
+.ant-pagination-item {
+  background: #0f172a !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+
+.ant-pagination-item a {
+  color: white !important;
+}
+
+.ant-pagination-item-active {
+  border-color: #f59e0b !important;
+}
+:where(.css-dev-only-do-not-override-15a0jj).ant-pagination .ant-pagination-prev .ant-pagination-item-link, :where(.css-dev-only-do-not-override-15a0jj).ant-pagination .ant-pagination-next .ant-pagination-item-link{
+  color: white !important;
+}
+
+
+
+.offer-description p {
+  margin: 0 0 10px 0;
+}
+
+.offer-description ul {
+  list-style-type: disc;
+  margin: 0 0 10px 20px; /* left margin to show bullets */
+  padding: 0;
+}
+
+.offer-description ol {
+  list-style-type: decimal;
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.offer-description li {
+  margin-bottom: 5px;
+}

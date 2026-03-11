@@ -29,17 +29,30 @@ const FeedbackTab = () => {
 
       <form onSubmit={handleSubmit} className="bg-navy-light rounded-lg border border-white/10 p-6 space-y-5 max-w-xl">
         <div>
-          <label className="block text-sm font-medium text-white/70 mb-1.5">Partner / Service</label>
+          <label className="block text-sm font-medium text-white/70 mb-1.5">
+            Partner / Service
+          </label>
+
           <select
             value={partner}
             onChange={(e) => setPartner(e.target.value)}
-            className="w-full bg-navy border border-white/10 rounded-md px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber/50"
+            className="w-full bg-navy-light border border-white/10 rounded-md px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber/50"
           >
-            <option value="">Select a partner</option>
-            <option value="AutoSpa Detailing">AutoSpa Detailing</option>
-            <option value="Azure Beach Club">Azure Beach Club</option>
-            <option value="FitPro Gym">FitPro Gym</option>
-            <option value="La Maison Restaurant">La Maison Restaurant</option>
+            <option value="" className="bg-gray-900 text-white">
+              Select a partner
+            </option>
+            <option value="AutoSpa Detailing" className="bg-gray-900 text-white">
+              AutoSpa Detailing
+            </option>
+            <option value="Azure Beach Club" className="bg-gray-900 text-white">
+              Azure Beach Club
+            </option>
+            <option value="FitPro Gym" className="bg-gray-900 text-white">
+              FitPro Gym
+            </option>
+            <option value="La Maison Restaurant" className="bg-gray-900 text-white">
+              La Maison Restaurant
+            </option>
           </select>
         </div>
 
@@ -66,7 +79,7 @@ const FeedbackTab = () => {
             onChange={(e) => setMessage(e.target.value)}
             rows={4}
             placeholder="Share your experience..."
-            className="w-full bg-navy border border-white/10 rounded-md px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-amber/50 resize-none"
+            className="w-full bg-navy-light border border-white/10 rounded-md px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-amber/50 resize-none"
           />
         </div>
 

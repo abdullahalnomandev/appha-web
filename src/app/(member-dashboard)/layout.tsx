@@ -126,7 +126,7 @@ export default function MemberLayout({
                 </aside>
 
                 {/* Page Content */}
-                <main className="relative flex-1 overflow-y-auto overflow-x-hidden p-6">
+                <main className="relative flex-1 overflow-y-auto overflow-x-hidden p-6 max-h-[calc(100vh-100px)]">
                     {/* Background image layer */}
                     <div
                         className="absolute inset-0 pointer-events-none"

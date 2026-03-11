@@ -137,7 +137,7 @@ function PartnerLoginContactInfo() {
               <span className="text-sm text-gray-600">
                 Don't have an account?{" "}
                 <Link href="/partners#partner-enquiry" className="text-yellow-400! font-medium">
-                  Apply here
+                  Become A Partner
                 </Link>
               </span>
             </div>

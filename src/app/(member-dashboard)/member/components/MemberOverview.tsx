@@ -5,7 +5,6 @@ const stats = [
   { label: "Available Offers", value: "24", sub: "Active partner offers", icon: Gift, color: "text-amber" },
   { label: "Upcoming Events", value: "5", sub: "This month", icon: Calendar, color: "text-blue-400" },
   { label: "Favorites", value: "8", sub: "Saved offers & partners", icon: Star, color: "text-yellow-400" },
-  { label: "Redemptions", value: "12", sub: "Offers redeemed", icon: TrendingUp, color: "text-emerald-400" },
 ];
 
 const recentActivity = [
@@ -37,7 +36,7 @@ const MemberOverviewTab = () => (
       <p className="text-sm text-white/40 mb-4">Your latest interactions</p>
       <div className="space-y-3">
         {recentActivity.map((a, i) => (
-          <div key={i} className="flex items-center justify-between p-4 rounded-lg bg-navy border border-white/5">
+          <div key={i} className="flex items-center justify-between p-4 rounded-lg bg-navy-light border border-white/5">
             <p className="text-sm text-white">{a.text}</p>
             <span className="text-xs text-white/40 whitespace-nowrap ml-4">{a.time}</span>
           </div>
