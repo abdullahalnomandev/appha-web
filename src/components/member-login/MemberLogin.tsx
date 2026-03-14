@@ -48,29 +48,28 @@ function MemberLogin() {
 
   const onFinish = async (values: { email: string; password: string }) => {
 
-    router.push('/member')
-    // setLoading(true);
+    setLoading(true);
 
-    // try {
-    //   const res = await apiFetch("/auth/partner-login", {
-    //     method: "POST",
-    //     body: JSON.stringify(values),
-    //   }) as { data: { token: string } } | null;
+    try {
+      const res = await apiFetch("/auth/member-login", {
+        method: "POST",
+        body: JSON.stringify(values),
+      }) as { data: { token: string } } | null;
 
-    //   console.log("res", res);
-    //   if (res && res.data.token) {
-    //     sessionStorage.setItem(authKey, res?.data.token);
-    //     // setLoading(false);
-    //     // toast.success("Login successful!");
-    //     router.push("/partner-dashboard");
-    //   }
-    //   form.resetFields();
+      console.log("res", res);
+      if (res && res.data.token) {
+        sessionStorage.setItem(authKey, res?.data.token);
+        setLoading(false);
+        toast.success("Login successful!");
+        router.push("/member");
+      }
+      form.resetFields();
 
-    // } catch (err: any) {
-    //   message.error(err.message || "Login failed!");
-    //   setLoading(false);
-    //   // toast.error(err.message || "Login failed!");
-    // }
+    } catch (err: any) {
+      message.error(err.message || "Login failed!");
+      setLoading(false);
+      // toast.error(err.message || "Login failed!");
+    }
   };
 
   return (

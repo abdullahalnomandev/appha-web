@@ -31,10 +31,10 @@ export const EventInfoModal: React.FC<Props> = ({ event, open, onClose }) => {
       footer={null}
       centered
       width={600}
-      bodyStyle={{ padding: 0, borderRadius: 16, overflow: "hidden", background: "#fff" }}
+      styles={{body:{ padding: 0, borderRadius: 16, overflow: "hidden", background: "#fff" }}}
       style={{ borderRadius: 16, padding: 0 }}
       title={null}
-      destroyOnClose
+      destroyOnHidden 
     >
       <div style={{ borderRadius: 16, overflow: "hidden", background: "#fff", fontFamily: "inherit" }}>
         {/* Image */}

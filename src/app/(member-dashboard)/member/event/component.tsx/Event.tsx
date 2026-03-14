@@ -2,35 +2,22 @@
 import { useState } from "react";
 import { Calendar, Users, Trash2, MapPin } from "lucide-react";
 import { toast } from "sonner";
-import { Modal, Form, Input, Button, Space, Divider } from "antd";
+import { Modal, Form, Input, Button, Space, Divider, Tooltip } from "antd";
 import { EventInfoModal } from "./EventInfoModal";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { Event } from "@/types/main";
+import { apiFetch } from "@/lib/api/api-fech";
+import { revalidateTagType } from "@/components/partnerDashboard/exclusiveOffer/exclusiveOfferActions";
 
-const events = [
-  {
-    "_id": "698a0ea6f24b53030aaca44d",
-    "name": "🥂 ALPHA LAUNCH BRUNCH & AFTER PARTY",
-    "title": "Welcome to ALPHA. Where leaders connect, celebrate, and elevate",
-    "image": "https://www.aiub.edu/Files/Uploads/aiub-environment-club.png",
-    "location": "LAR LAR, Zabeel House, The Greens",
-    "description": "<div dir=\"auto\" style=\"color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif; font-size: small;\">The official ALPHA Launch Event...</div>",
-    "eventDate": "2026-02-27T20:00:00.000Z",
-    "eventTime": "13:00",
-    "createdAt": "2026-02-09T16:43:18.587Z",
-    "updatedAt": "2026-02-09T16:43:18.587Z",
-    "eventCount": 0,
-    "attendees": 0,
-    "guests": []
-  }
-];
 
-export default function EventsTab() {
-  const [eventList, setEventList] = useState(events);
+export default function EventsTab({ data }: { data: Event[] }) {
+  const [eventList, setEventList] = useState(data);
   const [modalOpen, setModalOpen] = useState(false);
   const [guestModalOpen, setGuestModalOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [previewEvent, setPreviewEvent] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [form] = Form.useForm();
 
@@ -43,24 +30,38 @@ export default function EventsTab() {
   const closeGuestModal = () => setGuestModalOpen(false);
 
   const handleSaveGuests = async () => {
+    if (!selectedEventId) return;
+    setIsLoading(true);
+
     try {
+      // Validate the form first
       const values = await form.validateFields();
       const guests = values.guests || [];
-      if (!selectedEventId) return;
+      await apiFetch(
+        "/event-registration",
+        {
+          method: "POST",
+          body: JSON.stringify({ event: selectedEventId, guests }),
+        },
+        "client"
+      );
 
       const updatedEvents = eventList.map((e: any) => {
         if (e._id === selectedEventId) {
-          e.guests = [...e.guests, ...guests];
-          e.attendees += guests.length;
+          e.guests = [...(e.guests || []), ...guests];
+          e.attendees = (e.attendees || 0) + guests.length;
         }
         return e;
       });
-
+      revalidateTagType("event");
       setEventList(updatedEvents);
+      setIsLoading(false);
       toast.success("Event request submitted successfully!");
       closeGuestModal();
-    } catch (err) {
-      console.log("Validation Failed:", err);
+    } catch (err: any) {
+      setIsLoading(false);
+      toast.error(err.message || "Failed to submit event request.");
+      console.log("Validation or submission failed:", err);
     }
   };
 
@@ -72,44 +73,108 @@ export default function EventsTab() {
   const closePreviewModal = () => setModalOpen(false);
   dayjs.extend(customParseFormat);
 
+  console.log('data', data);
+
   return (
     <div className="space-y-6 p-4">
-      <h3 className="text-lg font-bold text-white">Upcoming Events</h3>
-
+      <h3 className="text-lg font-bold text-black">Upcoming Events</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {eventList.map((e) => (
+        {data?.map((e) => (
           <div
             key={e._id}
-            className="bg-navy-light rounded-lg border border-white/10 p-5 flex flex-col gap-3"
+            className="rounded-lg border border-gray-200 p-5 flex flex-col gap-3 hover:shadow-md duration-200"
           >
-            <div className="flex justify-between">
-              <h4 className="text-white font-semibold">{e.title}</h4>
-              <Button type="link" className="underline" onClick={() => openPreviewModal(e)}>
+            <div className="flex justify-between items-start">
+              <div>
+                <h4 className="text-gray-900 font-bold text-base">{e.name}</h4>
+                <p className="text-gray-500 text-sm">{e.title}</p>
+              </div>
+              <Button
+                type="link"
+                className="underline text-gray-600"
+                onClick={() => openPreviewModal(e)}
+              >
                 Preview
               </Button>
             </div>
-            <div className="flex items-center gap-2 text-xs text-white/60">
-              <MapPin className="w-3 h-3" /> {e.location}
-            </div>
-            <div className="flex items-center gap-2 text-xs text-white/40">
-              <div className="flex items-center gap-2 text-xs text-white/40">
-                <Calendar className="w-3 h-3" />
-                {dayjs(e.eventDate).format("DD MMM YYYY")} ·   {dayjs(e.eventTime, "HH:mm").format("hh:mm A")}
-              </div>
+
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <MapPin className="w-3 h-3 text-gray-400" /> {e.location}
             </div>
 
-            <Button
-              type="primary"
-              size="large"
-              style={{ width: "fit-content", marginTop: 8 }}
-              onClick={() => openGuestModal(e._id)}
+            <div className="flex items-center gap-2 text-xs text-gray-400">
+              <Calendar className="w-3 h-3 text-gray-400" />
+              {dayjs(e.eventDate).format("DD MMM YYYY")} · {dayjs(e.eventTime, "HH:mm").format("hh:mm A")}
+            </div>
+            <Tooltip
+              title={
+                e.joinStatus === "pending"
+                  ? "Your booking request is waiting for approval"
+                  : e.joinStatus === "confirmed"
+                    ? "Your booking request has been approved"
+                    : e.joinStatus === "cancelled"
+                      ? "Your booking request was cancelled"
+                      : e.joinStatus === "time_exceeded"
+                        ? "Booking time has expired"
+                        : "Click to request joining this event"
+              }
             >
-              Request Event
-            </Button>
+              <Button
+                type="primary"
+                size="large"
+                style={{
+                  width: "fit-content",
+                  marginTop: 8,
+                  background:
+                    e.joinStatus === "pending"
+                      ? "#faad14"
+                      : e.joinStatus === "time_exceeded"
+                        ? "#ff4d4f"
+                        : e.joinStatus === "cancelled"
+                          ? "#ff4d4f"
+                          : e.joinStatus === "confirmed"
+                            ? "#52c41a"
+                            : undefined,
+                  color:
+                    e.joinStatus === "pending" ||
+                      e.joinStatus === "time_exceeded" ||
+                      e.joinStatus === "cancelled" ||
+                      e.joinStatus === "confirmed"
+                      ? "#fff"
+                      : undefined,
+                  borderColor:
+                    e.joinStatus === "pending"
+                      ? "#faad14"
+                      : e.joinStatus === "time_exceeded"
+                        ? "#ff4d4f"
+                        : e.joinStatus === "cancelled"
+                          ? "#ff4d4f"
+                          : e.joinStatus === "confirmed"
+                            ? "#52c41a"
+                            : undefined,
+                }}
+                disabled={
+                  e.joinStatus === "pending" ||
+                  e.joinStatus === "confirmed" ||
+                  e.joinStatus === "time_exceeded" ||
+                  e.joinStatus === "cancelled"
+                }
+                onClick={() => openGuestModal(e._id)}
+              >
+                {e.joinStatus === "pending"
+                  ? "Pending"
+                  : e.joinStatus === "confirmed"
+                    ? "Confirmed"
+                    : e.joinStatus === "cancelled"
+                      ? "Cancelled"
+                      : e.joinStatus === "time_exceeded"
+                        ? "Time Exceeded"
+                        : "Request Event"}
+              </Button>
+            </Tooltip>
           </div>
         ))}
       </div>
-
       {/* Guest Modal */}
       <Modal
         title="Add Guests (Optional)"
@@ -117,6 +182,7 @@ export default function EventsTab() {
         onCancel={closeGuestModal}
         onOk={handleSaveGuests}
         okText="Submit"
+        confirmLoading={isLoading}
         cancelText="Cancel"
         width={700}
       >
@@ -137,7 +203,7 @@ export default function EventsTab() {
                     <Space direction="vertical" size="small" style={{ width: "100%" }}>
                       <Form.Item
                         {...restField}
-                        name={[name, "fullName"]}
+                        name={[name, "name"]}
                         label="Full Name"
                       >
                         <Input placeholder="John Doe" />
@@ -154,7 +220,7 @@ export default function EventsTab() {
 
                       <Form.Item
                         {...restField}
-                        name={[name, "contactNumber"]}
+                        name={[name, "phone"]}
                         label="Phone"
                       >
                         <Input placeholder="+1234567890" />

@@ -1,42 +1,45 @@
 "use client";
 
-import { useState } from "react";
-import { Gift, Clock } from "lucide-react";
-import { Modal, Button, Pagination } from "antd";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Gift, Heart } from "lucide-react";
+import { Button, Pagination } from "antd";
 import { toast } from "sonner";
-import { getImage } from "@/lib/api/api-fech";
+import { apiFetch, getImage } from "@/lib/api/api-fech";
 import { OfferModal } from "./OfferModal";
-import { Heart } from "lucide-react";
-
-interface Offer {
-  _id: string;
-  name: string;
-  user: { _id: string; name: string };
-  title: string;
-  address: string;
-  location: { type: string; coordinates: [number, number] };
-  image: string[];
-  description: string;
-  discount: { enable: boolean; value: number };
-  category: { _id: string; name: string };
-  status: string;
-  published: boolean;
-  isFavourite: boolean;
-}
+import { Offer } from "@/types/main";
 
 interface OffersTabProps {
-  offers: Offer[];
+  data: Offer[];
+  currentPage: number;
+  searchTerm: string;
+  total: number;
 }
 
-const OffersTab = ({ offers }: OffersTabProps) => {
+const OffersTab = ({ data, total, currentPage, searchTerm }: OffersTabProps) => {
+  const router = useRouter();
+  const pageSize = 10;
+
+  const [search, setSearch] = useState(searchTerm);
+  const [page, setPage] = useState(currentPage);
+  const [favorites, setFavorites] = useState<string[]>([]);
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [favorites, setFavorites] = useState<string[]>([]);
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 9; // number of offers per page
-  const totalPages = Math.ceil(offers.length / pageSize);
+  // 🔹 Sync favorites with API data
+  useEffect(() => {
+    const favIds = data
+      .filter((offer) => offer.isFavourite)
+      .map((offer) => offer._id);
+
+    setFavorites(favIds);
+  }, [data]);
+
+  const toggleFavorite = (id: string) => {
+    setFavorites((prev) =>
+      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
+    );
+  };
 
   const handlePreview = (offer: Offer) => {
     setSelectedOffer(offer);
@@ -49,44 +52,49 @@ const OffersTab = ({ offers }: OffersTabProps) => {
     setIsModalOpen(false);
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+  const handleToggleFavorite = async (id: string) => {
+    toggleFavorite(id); // optimistic update
+
+    try {
+      const fb = await apiFetch(
+        `/exclusive-offer/favourite/${id}`,
+        { method: "POST" },
+        "client"
+      ) as any;
+
+      toast.success(
+        fb?.data?.favourite
+          ? "Offer favorited successfully!"
+          : "Offer unfavorited successfully!"
+      );
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+    }
   };
 
-  // Slice offers for current page
-  const paginatedOffers = offers.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
-
-
-  const toggleFavorite = (id: string) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
-    );
-  };
   return (
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-bold text-white">Available Offers</h3>
-          <p className="text-sm text-white/40">Browse and redeem partner offers</p>
+          <h3 className="text-lg font-bold text-gray-900">Available Offers</h3>
+          <p className="text-sm text-gray-500">
+            Browse and redeem partner offers
+          </p>
         </div>
-        <span className="text-xs text-amber border border-amber/30 rounded-full px-3 py-1">
-          {offers.length} available
+        <span className="text-xs text-amber-600 border border-amber-300 rounded-full px-3 py-1">
+          {total} available
         </span>
       </div>
 
       {/* Offer List */}
       <div className="space-y-3">
-        {paginatedOffers.map((offer) => (
+        {data.map((offer) => (
           <div
             key={offer._id}
-            className="bg-navy-light rounded-lg border border-white/10 p-5 flex flex-col sm:flex-row sm:items-center gap-4 hover:shadow-lg transition-shadow duration-200"
+            className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col sm:flex-row sm:items-center gap-4 hover:shadow-md transition-shadow duration-200"
           >
-            {/* Thumbnail */}
-            {offer.image[0] && (
+            {offer.image?.[0] && (
               <img
                 src={getImage(offer.image[0])}
                 alt={offer.title}
@@ -98,47 +106,45 @@ const OffersTab = ({ offers }: OffersTabProps) => {
             <div className="flex-1 flex flex-col justify-between gap-2">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <Gift className="w-4 h-4 text-amber" />
-                  <h4 className="text-white font-semibold text-lg">{offer.title}</h4>
+                  <Gift className="w-4 h-4 text-amber-600" />
+                  <h4 className="text-gray-900 font-semibold text-lg">{offer.name}</h4>
                 </div>
 
-                <div className="text-xs text-white/40  gap-2 sm:gap-4">
-                  <p><strong>Partner:</strong> {offer.name}</p>
-                  <p><strong>Category:</strong> {offer.category.name}</p>
+                <div className="text-xs text-gray-500 gap-2 sm:gap-4">
+                  <p>
+                    <strong>title:</strong> {offer.title}
+                  </p>
+                  <p>
+                    <strong>Category:</strong> {offer.category.name}
+                  </p>
                 </div>
 
-                {/* Discount Badge */}
                 {offer.discount.enable && (
-                  <span className="inline-block mt-2 text-xs font-medium text-black bg-amber px-2 py-1 rounded">
+                  <span className="inline-block mt-2 text-xs font-medium text-white bg-amber-600 px-2 py-1 rounded">
                     {offer.discount.value}% Off
                   </span>
                 )}
               </div>
             </div>
 
-            {/* Preview Button */}
-            {/* <button
-              onClick={() => handlePreview(offer)}
-              className="text-sm font-medium px-5 py-2 rounded-md text-black cursor-pointer whitespace-nowrap"
-              style={{ background: "linear-gradient(180deg, #FCEFAE 0%, #DFBB0B 100%)" }}
-            >
-              Preview Offer
-            </button> */}
-            <div className="flex flex-col justify-end">
+            {/* Actions */}
+            <div className="flex flex-col justify-end gap-2">
               <Button
                 type="link"
                 className="underline flex items-center gap-1"
-                onClick={() => toggleFavorite(offer._id)}
+                onClick={() => handleToggleFavorite(offer._id)}
               >
                 <Heart
-                  className={`w-4 h-4 ${favorites.includes(offer._id) ? "fill-red-500 text-red-500" : ""
+                  className={`w-4 h-4 ${favorites.includes(offer._id)
+                      ? "fill-red-500 text-red-500"
+                      : "text-gray-400"
                     }`}
                 />
               </Button>
 
               <Button
                 type="link"
-                className="underline"
+                className="underline text-gray-600"
                 onClick={() => handlePreview(offer)}
               >
                 Preview
@@ -149,15 +155,18 @@ const OffersTab = ({ offers }: OffersTabProps) => {
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-end-safe mt-4">
+      {total > pageSize && (
+        <div className="flex justify-end mt-4">
           <Pagination
-            current={currentPage}
+            current={page}
             pageSize={pageSize}
-            total={offers.length}
-            onChange={handlePageChange}
-            showSizeChanger={false}
-            itemRender={(page, type, originalElement) => originalElement}
+            total={total}
+            onChange={(p) => {
+              setPage(p);
+              router.push(
+                `/member/offers?page=${p}&searchTerm=${encodeURIComponent(search)}`
+              );
+            }}
           />
         </div>
       )}

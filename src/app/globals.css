@@ -198,26 +198,22 @@ button.react-international-phone-country-selector-button:focus {
 }
 
 /* MODAL  STYLES **/
-/* Modal background */
-.alpha-partner-modal .ant-modal-content {
-  background-color: hsl(var(--navy)) !important; /* same as navy-light */
+/* .alpha-partner-modal .ant-modal-content {
+  background-color: hsl(var(--navy)) !important; 
   border: 1px solid rgba(255,255,255,0.1) !important;
   border-radius: 10px !important;
   color: white !important;
 }
 
-/* Modal header */
 .alpha-partner-modal .ant-modal-header {
   background: transparent !important;
   border-bottom: 1px solid rgba(255,255,255,0.08) !important;
 }
 
-/* Title */
 .alpha-partner-modal .ant-modal-title {
   color: white !important;
 }
 
-/* Close button */
 .alpha-partner-modal .ant-modal-close {
   color: rgba(255,255,255,0.6) !important;
 }
@@ -226,27 +222,26 @@ button.react-international-phone-country-selector-button:focus {
   color: white !important;
 }
 
-/* Modal body text */
 .alpha-partner-modal .ant-modal-body {
   color: rgba(255,255,255,0.85);
-}
+} */
 
 
-.ant-pagination-item {
+/* .ant-pagination-item {
   background: #0f172a !important;
   border-color: rgba(255,255,255,0.1) !important;
-}
+} */
 
-.ant-pagination-item a {
+/* .ant-pagination-item a {
   color: white !important;
-}
+} */
 
-.ant-pagination-item-active {
+/* .ant-pagination-item-active {
   border-color: #f59e0b !important;
 }
 :where(.css-dev-only-do-not-override-15a0jj).ant-pagination .ant-pagination-prev .ant-pagination-item-link, :where(.css-dev-only-do-not-override-15a0jj).ant-pagination .ant-pagination-next .ant-pagination-item-link{
   color: white !important;
-}
+} */
 
 
 
@@ -269,3 +264,233 @@ button.react-international-phone-country-selector-button:focus {
 .offer-description li {
   margin-bottom: 5px;
 }
+/* @import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --primary: #c175fc;
+
+  --navy: 0 0% 100%;
+  --navy-light: 210 40% 96%;
+  --amber: 47 91% 46%;
+  --amber-hover: 47 91% 40%;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+
+  --navy: 0 0% 100%;
+  --navy-light: 210 40% 96%;
+
+  --amber: 47 91% 46%;
+  --amber-hover: 47 91% 40%;
+}
+
+@layer utilities {
+
+  .text-amber {
+    color: hsl(var(--amber));
+  }
+
+  .bg-amber {
+    background-color: hsl(var(--amber));
+  }
+
+  .bg-amber-hover {
+    background-color: hsl(var(--amber-hover));
+  }
+
+  .border-amber {
+    border-color: hsl(var(--amber));
+  }
+
+  .ring-amber {
+    --tw-ring-color: hsl(var(--amber));
+  }
+
+  .bg-navy {
+    background-color: #ffffff;
+  }
+
+  .bg-navy-light {
+    background-color: #f8fafc;
+  }
+
+  .hover\:bg-amber:hover {
+    background-color: hsl(var(--amber));
+  }
+
+  .hover\:bg-amber-hover:hover {
+    background-color: hsl(var(--amber-hover));
+  }
+
+  .hover\:text-navy:hover {
+    color: #0f172a;
+  }
+
+  .section-title {
+    @apply text-3xl lg:text-5xl font-semibold mb-6;
+  }
+
+  .section-subtitle {
+    @apply text-[#242424] text-[16px] lg:text-lg leading-relaxed;
+  }
+
+  .container {
+    @apply container mx-auto px-4 md:px-5;
+  }
+
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-poppins), sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ant-btn {
+  box-shadow: none !important;
+}
+
+.boxShadow {
+  box-shadow: 0px 3px 4px 0px #0000001a;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+:where(.css-dev-only-do-not-override-o38y83).ant-input-outlined:focus,
+:where(.css-dev-only-do-not-override-o38y83).ant-input-outlined:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #0C1223 !important;
+}
+
+.ant-select.ant-select-lg.ant-select-outlined.ant-select-in-form-item.ant-select-status-success.rounded-md.css-dev-only-do-not-override-15a0jj.ant-select-single.ant-select-show-arrow {
+  background-color: #F1F1F1;
+}
+
+.ant-drawer-close {
+  right: 16px !important;
+  left: auto !important;
+}
+
+.react-international-phone-input {
+  border-radius: 0.375rem;
+  background-color: #F1F1F1 !important;
+  border: none;
+  width: 100%;
+  padding: 0.5rem;
+}
+
+button.react-international-phone-country-selector-button {
+  background: #f1f1f1;
+}
+
+button.react-international-phone-country-selector-button:focus {
+  background: #e0b20b !important;
+}
+
+.react-international-phone-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #e0b20b !important;
+}
+
+.react-international-phone-country-selector-button {
+  height: 40px !important;
+  background-color: #F1F1F1 !important;
+}
+
+.alpha-partner-modal .ant-modal-content {
+  background-color: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 10px !important;
+  color: #0f172a !important;
+}
+
+.alpha-partner-modal .ant-modal-header {
+  background: transparent !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.alpha-partner-modal .ant-modal-title {
+  color: #0f172a !important;
+}
+
+.alpha-partner-modal .ant-modal-close {
+  color: #6b7280 !important;
+}
+
+.alpha-partner-modal .ant-modal-close:hover {
+  color: #111827 !important;
+}
+
+.alpha-partner-modal .ant-modal-body {
+  color: #374151;
+}
+
+.ant-pagination-item {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+}
+
+.ant-pagination-item a {
+  color: #0f172a !important;
+}
+
+.ant-pagination-item-active {
+  border-color: #f59e0b !important;
+}
+
+:where(.css-dev-only-do-not-override-15a0jj).ant-pagination 
+.ant-pagination-prev .ant-pagination-item-link,
+:where(.css-dev-only-do-not-override-15a0jj).ant-pagination 
+.ant-pagination-next .ant-pagination-item-link{
+  color: #0f172a !important;
+}
+
+.offer-description p {
+  margin: 0 0 10px 0;
+}
+
+.offer-description ul {
+  list-style-type: disc;
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.offer-description ol {
+  list-style-type: decimal;
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.offer-description li {
+  margin-bottom: 5px;
+} */

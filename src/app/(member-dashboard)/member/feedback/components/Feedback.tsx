@@ -1,96 +1,80 @@
 "use client";
 import { useState } from "react";
-import { MessageSquare, Star } from "lucide-react";
-import { toast } from "sonner";
+import { Form, Input, Select, Button, Rate, message as antdMessage } from "antd";
+import { MessageSquare } from "lucide-react";
+
+const { TextArea } = Input;
 
 const FeedbackTab = () => {
-  const [rating, setRating] = useState(0);
-  const [partner, setPartner] = useState("");
-  const [message, setMessage] = useState("");
+  const [form] = Form.useForm();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!rating || !partner || !message) {
-      toast.error("Please fill all fields and select a rating.");
+  const handleSubmit = (values: any) => {
+    const { partner, rating, message } = values;
+
+    if (!partner || !rating || !message) {
+      antdMessage.error("Please fill all fields and select a rating.");
       return;
     }
-    toast.success("Feedback submitted! Thank you for helping us improve.");
-    setRating(0);
-    setPartner("");
-    setMessage("");
+
+    antdMessage.success("Feedback submitted! Thank you for helping us improve.");
+    form.resetFields();
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-bold text-white">Share Your Feedback</h3>
-        <p className="text-sm text-white/40">Help us and our partners deliver a better experience</p>
+    <div className="p-6 rounded-lg! max-w-xl! mx-auto!">
+      <div className="mb-6">
+        <h3 className="text-lg font-bold text-gray-900">Share Your Feedback</h3>
+        <p className="text-sm text-gray-500">
+          Help us and our partners deliver a better experience
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-navy-light rounded-lg border border-white/10 p-6 space-y-5 max-w-xl">
-        <div>
-          <label className="block text-sm font-medium text-white/70 mb-1.5">
-            Partner / Service
-          </label>
-
-          <select
-            value={partner}
-            onChange={(e) => setPartner(e.target.value)}
-            className="w-full bg-navy-light border border-white/10 rounded-md px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber/50"
-          >
-            <option value="" className="bg-gray-900 text-white">
-              Select a partner
-            </option>
-            <option value="AutoSpa Detailing" className="bg-gray-900 text-white">
-              AutoSpa Detailing
-            </option>
-            <option value="Azure Beach Club" className="bg-gray-900 text-white">
-              Azure Beach Club
-            </option>
-            <option value="FitPro Gym" className="bg-gray-900 text-white">
-              FitPro Gym
-            </option>
-            <option value="La Maison Restaurant" className="bg-gray-900 text-white">
-              La Maison Restaurant
-            </option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-white/70 mb-1.5">Rating</label>
-          <div className="flex gap-1">
-            {[1, 2, 3, 4, 5].map((s) => (
-              <button
-                type="button"
-                key={s}
-                onClick={() => setRating(s)}
-                className="p-1"
-              >
-                <Star className={`w-6 h-6 transition-colors ${s <= rating ? "text-yellow-400 fill-current" : "text-white/20"}`} />
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-white/70 mb-1.5">Your Feedback</label>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows={4}
-            placeholder="Share your experience..."
-            className="w-full bg-navy-light border border-white/10 rounded-md px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-amber/50 resize-none"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="text-sm font-medium px-6 py-2.5 rounded-md text-[black] whitespace-nowrap cursor-pointer"
-          style={{ background: "linear-gradient(180deg, #FCEFAE 0%, #DFBB0B 100%)" }}
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleSubmit}
+        className=" rounded-lg! p-6! border border-gray-200 shadow-sm"
+      >
+        <Form.Item
+          name="partner"
+          label="Partner / Service"
+          rules={[{ required: true, message: "Please select a partner" }]}
         >
-          <span className="flex items-center gap-2"><MessageSquare className="w-4 h-4" /> Submit Feedback</span>
-        </button>
-      </form>
+          <Select placeholder="Select a partner" allowClear>
+            <Select.Option value="AutoSpa Detailing">AutoSpa Detailing</Select.Option>
+            <Select.Option value="Azure Beach Club">Azure Beach Club</Select.Option>
+            <Select.Option value="FitPro Gym">FitPro Gym</Select.Option>
+            <Select.Option value="La Maison Restaurant">La Maison Restaurant</Select.Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="rating"
+          label="Rating"
+          rules={[{ required: true, message: "Please select a rating" }]}
+        >
+          <Rate />
+        </Form.Item>
+
+        <Form.Item
+          name="message"
+          label="Your Feedback"
+          rules={[{ required: true, message: "Please write your feedback" }]}
+        >
+          <TextArea rows={4} placeholder="Share your experience..." />
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="flex items-center gap-2"
+            style={{ background: "linear-gradient(180deg, #FCEFAE 0%, #DFBB0B 100%)", border: "none", color: "#000" }}
+          >
+            <MessageSquare className="w-4 h-4" /> Submit Feedback
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
 };

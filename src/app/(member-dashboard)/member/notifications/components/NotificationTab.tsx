@@ -18,8 +18,8 @@ const iconMap = {
 const NotificationsTab = () => (
   <div className="space-y-4">
     <div>
-      <h3 className="text-lg font-bold text-white">Notifications</h3>
-      <p className="text-sm text-white/40">Stay updated with offers, events, and announcements</p>
+      <h3 className="text-lg font-bold text-gray-900">Notifications</h3>
+      <p className="text-sm text-gray-500">Stay updated with offers, events, and announcements</p>
     </div>
 
     <div className="space-y-3">
@@ -28,20 +28,25 @@ const NotificationsTab = () => (
         return (
           <div
             key={n.id}
-            className={`bg-navy-light rounded-lg border p-4 flex items-start gap-4 ${
-              n.read ? "border-white/5" : "border-[#DFBB0B]/30 "
+            className={`bg-white rounded-lg border p-4 flex items-start gap-4 ${
+              n.read ? "border-gray-200" : "border-amber-200 shadow-sm"
             }`}
           >
-            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${n.read ? "bg-white/5" : "bg-amber/10"}`}>
-              <Icon className={`w-4 h-4 ${n.read ? "text-white/40" : "text-amber"}`} />
+            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+              n.read ? "bg-gray-100" : "bg-amber-100"
+            }`}>
+              <Icon className={`w-4 h-4 ${n.read ? "text-gray-400" : "text-amber-500"}`} />
             </div>
+
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h4 className={`text-sm font-semibold ${n.read ? "text-white/60" : "text-white"}`}>{n.title}</h4>
-                {!n.read && <span className="w-2 h-2 rounded-full bg-amber shrink-0" />}
+                <h4 className={`text-sm font-semibold ${n.read ? "text-gray-500" : "text-gray-900"}`}>
+                  {n.title}
+                </h4>
+                {!n.read && <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />}
               </div>
-              <p className="text-xs text-white/40 mt-0.5">{n.message}</p>
-              <span className="text-xs text-white/30 mt-1 block">{n.time}</span>
+              <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>
+              <span className="text-xs text-gray-400 mt-1 block">{n.time}</span>
             </div>
           </div>
         );
