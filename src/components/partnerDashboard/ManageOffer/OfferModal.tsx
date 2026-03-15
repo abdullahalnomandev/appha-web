@@ -24,7 +24,6 @@ const OfferModal: FC<OfferModalProps> = ({
 
   const uploadProps: UploadProps = {
     beforeUpload: (file) => {
-      console.log(file);
       return false;
     },
   };

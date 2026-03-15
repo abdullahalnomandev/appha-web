@@ -178,8 +178,6 @@ export default function MemberApplicationForm() {
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  console.log({ emiratesIdFile, passportFile });
-
   // Client-side fetch using `use` (Suspense)
   const membershipData = use(membershipPromise);
   const selectedMembershipType = Form.useWatch("membershipType", form);
@@ -204,11 +202,6 @@ export default function MemberApplicationForm() {
     setFile((prev) => [...prev, file]); // append instead of replace
     return false; // prevent auto upload
   };
-  // const onFinish = (values: any) => {
-  //   const submission = { ...values, mobile: phone };
-  //   console.log(submission);
-  //   message.success("Application submitted successfully!");
-  // };
 
 
   const handleProfileUpload = (file: UploadFile) => {
@@ -220,8 +213,6 @@ export default function MemberApplicationForm() {
 
     return false;
   };
-
-  console.log('membershipData', membershipData);
 
 
 

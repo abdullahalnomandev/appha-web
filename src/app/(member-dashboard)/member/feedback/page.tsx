@@ -2,18 +2,13 @@ import { apiFetch } from "@/lib/api/api-fech";
 import FeedbackTab from "./components/Feedback";
 import { IPMember } from "@/types/main"; // Use Feedback type if needed
 
-interface Props {
-  searchParams: {
-    searchTerm?: string;
-  };
-}
 
 // API response type for users
 interface UserApiResponse {
   data: IPMember[]; 
 }
 
-export default async function Page({ searchParams }: Props) {
+export default async function Page({ searchParams }: any) {
   const searchTerm = searchParams.searchTerm || "";
 
   const params = new URLSearchParams({

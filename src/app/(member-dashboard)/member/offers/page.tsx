@@ -1,30 +1,32 @@
 import { apiFetch } from "@/lib/api/api-fech";
-import { ApiResponse, Offer, Pagination, Partner } from "@/types/main";
+import { ApiResponse, Offer, Pagination } from "@/types/main";
 import OffersTab from "./components/OfferTab";
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     searchTerm?: string;
-  };
+  }>;
 }
 
-// Define the API response type
-interface PartnerApiResponse {
-  data: Partner[];
-  pagination?: Pagination; // optional total count if API provides it
+// Correct API response type for Offer
+interface OfferApiResponse extends ApiResponse<Offer> {
+  pagination?: Pagination;
 }
 
 export default async function Page({ searchParams }: Props) {
-  const page = searchParams.page || "1";
-  const searchTerm = searchParams.searchTerm || "";
+  // Await searchParams for Next.js 15
+  const paramsObj = await searchParams;
+  const page = paramsObj?.page || "1";
+  const searchTerm = paramsObj?.searchTerm || "";
 
   const params = new URLSearchParams({
     page,
     limit: "10",
-    searchTerm
+    searchTerm,
   });
 
+  // Fetch offers
   const getExclusiveOffer = (await apiFetch(
     "/exclusive-offer?" + params.toString(),
     {
@@ -33,12 +35,10 @@ export default async function Page({ searchParams }: Props) {
       next: { tags: ["exclusive-offer"] },
     },
     "server"
-  )) as ApiResponse<Offer>;
+  )) as OfferApiResponse;
 
   const data: Offer[] = getExclusiveOffer?.data || [];
   const pagination = getExclusiveOffer?.pagination;
-
-  console.log("data", data);
 
   return (
     <div>

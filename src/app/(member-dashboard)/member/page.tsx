@@ -19,40 +19,38 @@ interface INotification {
 }
 
 interface Props {
-  searchParams?: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }
 
 export default async function Page({ searchParams }: Props) {
-  // Fetch feedback overview
-  const feedback = await apiFetch(
-    "/feedback/overview",
-    { cache: "force-cache" },
-    "server"
-  ) as ApiResponse<OverviewData>;
+  // Await searchParams for Next.js 15
+  const paramsObj = await searchParams;
+  const page = paramsObj?.page || "1";
 
-  // Determine pagination
-  const page = searchParams?.page || "1";
-  const params = new URLSearchParams({
+  // Prepare query params
+  const notificationParams = new URLSearchParams({
     page,
     limit: "4",
   });
 
-  // Fetch notifications
-  const notifications = await apiFetch(
-    "/notification?" + params.toString(),
-    {
-      method: "GET",
-      cache: "force-cache",
-      next: { tags: ["notification"] },
-    },
-    "server"
-  ) as ApiResponse<INotification[]>;
+  // Run both API calls in parallel
+  const [feedback, notifications] = await Promise.all([
+    apiFetch("/feedback/overview", { cache: "force-cache" }, "server") as Promise<ApiResponse<OverviewData>>,
+    apiFetch("/notification?" + notificationParams.toString(), { 
+      method: "GET", 
+      cache: "force-cache", 
+      next: { tags: ["notification"] } 
+    }, "server") as Promise<ApiResponse<INotification[]>>
+  ]);
 
+  const notificationData: INotification[] = notifications?.data || [];
 
   return (
     <div>
-      <MemberOverviewTab data={feedback.data} notifications={notifications.data} />
-      {/* You can use notification.data here if needed */}
+      <MemberOverviewTab
+        data={feedback.data}
+        notifications={notificationData}
+      />
     </div>
   );
 }

@@ -3,21 +3,29 @@ import { ApiResponse, INotification, Pagination } from "@/types/main";
 import NotificationsTab from "./components/NotificationTab";
 
 interface Props {
-  searchParams?: {
+  searchParams: Promise<{
     page?: string;
     searchTerm?: string;
-  };
+  }>;
+}
+
+// Typed API response including optional pagination
+interface NotificationApiResponse extends ApiResponse<INotification> {
+  pagination?: Pagination;
 }
 
 export default async function Page({ searchParams }: Props) {
-  const page = searchParams?.page || "1";
+  // Await searchParams for Next.js 15
+  const paramsObj = await searchParams;
+  const page = paramsObj?.page || "1";
 
   const params = new URLSearchParams({
     page,
     limit: "10",
   });
 
-  const notification = (await apiFetch(
+  // Fetch notifications
+  const notificationResponse = (await apiFetch(
     "/notification?" + params.toString(),
     {
       method: "GET",
@@ -25,13 +33,11 @@ export default async function Page({ searchParams }: Props) {
       next: { tags: ["notification"] },
     },
     "server"
-  )) as ApiResponse<INotification[]>;
+  )) as NotificationApiResponse;
 
-  const data: any[] = notification?.data || [];
+  const data: INotification[] = notificationResponse?.data || [];
   const pagination: Pagination =
-    notification?.pagination || { total: 0, limit: 0, page: 0, totalPage: 0 };
-
-  console.log("data", data);
+    notificationResponse?.pagination || { total: 0, limit: 10, page: 1, totalPage: 0 };
 
   return (
     <div>

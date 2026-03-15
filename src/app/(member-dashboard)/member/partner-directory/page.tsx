@@ -3,10 +3,10 @@ import PartnerDirectory from "./components/PartnerDirectory";
 import { Pagination, Partner } from "@/types/main";
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     searchTerm?: string;
-  };
+  }>;
 }
 
 // Define the API response type
@@ -16,8 +16,10 @@ interface PartnerApiResponse {
 }
 
 export default async function Page({ searchParams }: Props) {
-  const page = searchParams.page || "1";
-  const searchTerm = searchParams.searchTerm || "";
+  // Await searchParams for Next.js 15
+  const paramsObj = await searchParams;
+  const page = paramsObj?.page || "1";
+  const searchTerm = paramsObj?.searchTerm || "";
 
   const params = new URLSearchParams({
     page,
@@ -26,7 +28,7 @@ export default async function Page({ searchParams }: Props) {
     partnerShipStatus: "active",
   });
 
-  // Tell TypeScript what type to expect
+  // Fetch partner applications
   const getPartnerApplication = (await apiFetch(
     "/partner-request?" + params.toString(),
     {
@@ -39,15 +41,18 @@ export default async function Page({ searchParams }: Props) {
 
   // Safely extract data
   const data: Partner[] = getPartnerApplication?.data || [];
-  const pagination = getPartnerApplication?.pagination ;
-
-  console.log("getPartnerApplication", pagination);
+  const pagination = getPartnerApplication?.pagination || {
+    total: 0,
+    limit: 10,
+    page: parseInt(page),
+    totalPage: 0,
+  };
 
   return (
     <div>
       <PartnerDirectory
         data={data}
-        total={pagination?.total || 0}
+        total={pagination.total}
         currentPage={parseInt(page)}
         searchTerm={searchTerm}
       />

@@ -61,7 +61,6 @@ export default function EventsTab({ data }: { data: Event[] }) {
     } catch (err: any) {
       setIsLoading(false);
       toast.error(err.message || "Failed to submit event request.");
-      console.log("Validation or submission failed:", err);
     }
   };
 
@@ -72,8 +71,6 @@ export default function EventsTab({ data }: { data: Event[] }) {
 
   const closePreviewModal = () => setModalOpen(false);
   dayjs.extend(customParseFormat);
-
-  console.log('data', data);
 
   return (
     <div className="space-y-6 p-4">

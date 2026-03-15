@@ -23,7 +23,6 @@ export const formatTime12Hour = (time: string) => {
 
 export const EventInfoModal: React.FC<Props> = ({ event, open, onClose }) => {
   if (!event) return null;
-  console.log('THIS IS EVENT', event)
   return (
     <Modal
       open={open}

@@ -1,30 +1,30 @@
-
 import { apiFetch } from "@/lib/api/api-fech";
-import { ApiResponse, Offer, Pagination, Partner, Sponsor } from "@/types/main";
+import { ApiResponse, Sponsor, Pagination } from "@/types/main";
 import SponsorPlacementsTab from "./components/SponsorsEvent";
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     searchTerm?: string;
-  };
+  }>;
 }
 
-// Define the API response type
-interface SponsorApiResponse {
-  data: Partner[];
-  pagination?: Pagination; // optional total count if API provides it
+// Typed API response for Sponsor
+interface SponsorApiResponse extends ApiResponse<Sponsor> {
+  pagination?: Pagination;
 }
 
 export default async function Page({ searchParams }: Props) {
-  const page = searchParams.page || "1";
+  // Await searchParams for Next.js 15
+  const paramsObj = await searchParams;
+  const page = paramsObj?.page || "1";
 
   const params = new URLSearchParams({
     page,
-    limit: "100"
-
+    limit: "100",
   });
 
+  // Fetch sponsors
   const getSponsor = (await apiFetch(
     "/sponsor?" + params.toString(),
     {
@@ -33,18 +33,14 @@ export default async function Page({ searchParams }: Props) {
       next: { tags: ["sponsor"] },
     },
     "server"
-  )) as ApiResponse<Sponsor>;
+  )) as SponsorApiResponse;
 
   const data: Sponsor[] = getSponsor?.data || [];
-  const pagination = getSponsor?.pagination;
-
-  console.log("data", data);
+  const pagination = getSponsor?.pagination || { total: 0, limit: 100, page: parseInt(page), totalPage: 0 };
 
   return (
     <div>
-      <SponsorPlacementsTab
-        data={getSponsor?.data || []}
-      />
+      <SponsorPlacementsTab data={data} />
     </div>
   );
 }

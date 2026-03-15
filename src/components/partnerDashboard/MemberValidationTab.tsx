@@ -35,7 +35,6 @@ const MemberValidationTab = () => {
         { method: "GET", cache: "no-store" },
         "client"
       ) as { data: any };
-      console.log("res", res.data);
 
       if (res.data.length) {
         setFound({

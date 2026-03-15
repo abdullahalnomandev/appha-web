@@ -55,7 +55,6 @@ function PartnerLoginContactInfo() {
         body: JSON.stringify(values),
       }) as { data: { token: string } } | null;
 
-      console.log("res", res);
       if (res && res.data.token) {
         sessionStorage.setItem(authKey, res?.data.token);
         // setLoading(false);

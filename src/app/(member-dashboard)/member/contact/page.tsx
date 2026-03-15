@@ -3,14 +3,8 @@ import { apiFetch } from "@/lib/api/api-fech";
 import { ApiResponse, ITeamContact, Offer, Pagination, Partner } from "@/types/main";
 import ContactsTab from "./components/Contact";
 
-interface Props {
-  searchParams: {
-    page?: string;
-    searchTerm?: string;
-  };
-}
 
-export default async function Page({ searchParams }: Props) {
+export default async function Page({ searchParams }: any) {
   const page = searchParams.page || "1";
   const searchTerm = searchParams.searchTerm || "";
 
