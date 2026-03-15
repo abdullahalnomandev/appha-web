@@ -1,58 +1,113 @@
 "use client";
-import { Bell, Gift, Calendar, Info } from "lucide-react";
 
-const notifications = [
-  { id: 1, type: "offer", title: "New Offer: 20% Off at AutoSpa", message: "A new detailing offer is available for you.", time: "1 hour ago", read: false },
-  { id: 2, type: "event", title: "Event Reminder: Networking Night", message: "ALPHA Networking Night is in 3 days. Don't forget to RSVP!", time: "5 hours ago", read: false },
-  { id: 3, type: "info", title: "Membership Renewed", message: "Your ALPHA membership has been renewed for another year.", time: "2 days ago", read: true },
-  { id: 4, type: "offer", title: "Special Offer: Free Gym Trial", message: "FitPro Gym is offering 1 month free membership.", time: "3 days ago", read: true },
-  { id: 5, type: "event", title: "New Event: Luxury Car Rally", message: "An exciting track day at Yas Marina Circuit has been announced.", time: "1 week ago", read: true },
-];
+import { revalidateTagType } from "@/components/partnerDashboard/exclusiveOffer/exclusiveOfferActions";
+import { apiFetch } from "@/lib/api/api-fech";
+import { INotification, Pagination as PaginationType } from "@/types/main";
+import { Pagination } from "antd";
+import { Bell } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-const iconMap = {
-  offer: Gift,
-  event: Calendar,
-  info: Info,
-};
+interface Props {
+  data: INotification[] | undefined;
+  pagination: PaginationType;
+}
 
-const NotificationsTab = () => (
-  <div className="space-y-4">
-    <div>
-      <h3 className="text-lg font-bold text-gray-900">Notifications</h3>
-      <p className="text-sm text-gray-500">Stay updated with offers, events, and announcements</p>
-    </div>
+const NotificationsTab = ({ data, pagination }: Props) => {
+  const router = useRouter();
 
-    <div className="space-y-3">
-      {notifications.map((n) => {
-        const Icon = iconMap[n.type as keyof typeof iconMap] || Bell;
-        return (
-          <div
-            key={n.id}
-            className={`bg-white rounded-lg border p-4 flex items-start gap-4 ${
-              n.read ? "border-gray-200" : "border-amber-200 shadow-sm"
-            }`}
-          >
-            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-              n.read ? "bg-gray-100" : "bg-amber-100"
-            }`}>
-              <Icon className={`w-4 h-4 ${n.read ? "text-gray-400" : "text-amber-500"}`} />
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <h4 className={`text-sm font-semibold ${n.read ? "text-gray-500" : "text-gray-900"}`}>
-                  {n.title}
-                </h4>
-                {!n.read && <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />}
-              </div>
-              <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>
-              <span className="text-xs text-gray-400 mt-1 block">{n.time}</span>
-            </div>
-          </div>
+  const markSeen = async (n: INotification) => {
+    try {
+      if (!n.seen) {
+        await apiFetch(
+          `/notification/${n._id}`,
+          { method: "PATCH" },
+          "client"
         );
-      })}
+
+        revalidateTagType("notification");
+      }
+
+      if (n.path === "/event-registration") {
+        router.push("/member/event");
+      }
+    } catch (error) {
+      console.error("Failed to mark notification as seen", error);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <h3 className="text-lg font-bold text-gray-900">Notifications</h3>
+        <p className="text-sm text-gray-500">
+          Stay updated with offers, events, and announcements
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        {data?.length ? (
+          data.map((n) => (
+            <div
+              key={n._id}
+              onClick={() => markSeen(n)}
+              className={`cursor-pointer bg-white rounded-lg border p-4 flex items-start gap-4 transition hover:bg-gray-50 ${n.seen ? "border-gray-200" : "border-amber-200 shadow-sm"
+                }`}
+            >
+              <div
+                className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${n.seen ? "bg-gray-100" : "bg-amber-100"
+                  }`}
+              >
+                <Bell
+                  className={`w-4 h-4 ${n.seen ? "text-gray-400" : "text-amber-500"
+                    }`}
+                />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h4
+                    className={`text-sm font-semibold ${n.seen ? "text-gray-500" : "text-gray-900"
+                      }`}
+                  >
+                    {n.title}
+                  </h4>
+
+                  {!n.seen && (
+                    <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                  )}
+                </div>
+
+                <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>
+
+                <span className="text-xs text-gray-400 mt-1 block">
+                  {new Date(n.createdAt).toLocaleString()}
+                </span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-sm text-gray-500 text-center py-10">
+            No notifications found
+          </div>
+        )}
+      </div>
+
+      {/* Pagination */}
+      {pagination.total > 10 && (
+        <div className="flex justify-end pt-6">
+          <Pagination
+            current={pagination.page}
+            pageSize={1}
+            total={pagination.total}
+            showSizeChanger={false}
+            onChange={(p) => {
+              router.push(`/member/notifications?page=${p}`);
+            }}
+          />
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 export default NotificationsTab;

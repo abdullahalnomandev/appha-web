@@ -1,3 +1,4 @@
+import { getUserInfo } from "@/services/action.setTokenToCookie";
 import Banner from "./Banner";
 
 

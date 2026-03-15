@@ -107,6 +107,31 @@ export interface Event {
   publishing: boolean;
 };
 
+export type ITeamContact = {
+  _id?: string;
+  name: string;
+  title?: string;
+  phone: string;
+  email: string;
+  location?:string;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+
+export interface INotification {
+  _id: string;
+  receiver: string;
+  sender: string | null;
+  title: string;
+  message: string;
+  refId: string;
+  path: string;
+  seen: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ApiResponse <T> {
   data: T[];
   pagination?: Pagination; 

@@ -17,3 +17,7 @@ export const setAccessTokenToCookie = async (token: string, options?: any) => {
 
 
 
+
+export const getUserInfo = () => {
+  return sessionStorage.getItem(authKey);
+};

@@ -1,60 +1,58 @@
 "use client"
 import { Gift, Calendar, Star, TrendingUp } from "lucide-react";
 
-const stats = [
-  { label: "Available Offers", value: "24", sub: "Active partner offers", icon: Gift, color: "text-amber" },
-  { label: "Upcoming Events", value: "5", sub: "This month", icon: Calendar, color: "text-blue-400" },
-  { label: "Favorites", value: "8", sub: "Saved offers & partners", icon: Star, color: "text-yellow-400" },
-];
 
-const recentActivity = [
-  { text: "Redeemed 20% Off Premium Detailing at AutoSpa", time: "2 hours ago" },
-  { text: "Added VIP Lounge Access to favorites", time: "Yesterday" },
-  { text: "RSVP'd to ALPHA Networking Night", time: "3 days ago" },
-  { text: "Submitted feedback for Car Wash Plus", time: "1 week ago" },
-];
 
-const MemberOverviewTab = () => (
-  <div className="space-y-6">
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {stats.map((s) => (
-        <div
-          key={s.label}
-          className="rounded-lg border border-gray-200 bg-white p-5"
-        >
-          <p className="text-sm text-gray-500">{s.label}</p>
+const MemberOverviewTab = ({ data, notifications }: any) => {
 
-          <div className="flex items-end justify-between mt-3">
-            <div>
-              <p className={`text-3xl font-bold ${s.color}`}>{s.value}</p>
-              <p className="text-xs text-gray-400 mt-1">{s.sub}</p>
-            </div>
+  const stats = [
+    { label: "Available Offers", value: data?.availableOffer , sub: "Active partner offers", icon: Gift, color: "text-amber" },
+    { label: "Upcoming Events", value: data?.upcomingEvent, sub: "This month", icon: Calendar, color: "text-blue-400" },
+    { label: "Favorites", value: data?.favouriteOffer, sub: "Saved offers & partners", icon: Star, color: "text-yellow-400" },
+  ];
 
-            <s.icon className={`w-6 h-6 ${s.color} opacity-70`} />
-          </div>
-        </div>
-      ))}
-    </div>
-
-    <div className=" rounded-lg border border-gray-200 p-6">
-      <h3 className="text-base font-bold text-gray-900">Recent Activity</h3>
-      <p className="text-sm text-gray-500 mb-4">Your latest interactions</p>
-
-      <div className="space-y-3">
-        {recentActivity.map((a, i) => (
+  return ((
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((s) => (
           <div
-            key={i}
-            className="flex items-center justify-between p-4 rounded-lg  border border-gray-200"
+            key={s.label}
+            className="rounded-lg border border-gray-200 bg-white p-5"
           >
-            <p className="text-sm text-gray-700">{a.text}</p>
-            <span className="text-xs text-gray-400 whitespace-nowrap ml-4">
-              {a.time}
-            </span>
+            <p className="text-sm text-gray-500">{s.label}</p>
+
+            <div className="flex items-end justify-between mt-3">
+              <div>
+                <p className={`text-3xl font-bold ${s.color}`}>{s.value}</p>
+                <p className="text-xs text-gray-400 mt-1">{s.sub}</p>
+              </div>
+
+              <s.icon className={`w-6 h-6 ${s.color} opacity-70`} />
+            </div>
           </div>
         ))}
       </div>
+
+      <div className=" rounded-lg border border-gray-200 p-6">
+        <h3 className="text-base font-bold text-gray-900">Recent Activity</h3>
+        <p className="text-sm text-gray-500 mb-4">Your latest interactions</p>
+
+        <div className="space-y-3">
+          {notifications.map((a: any, i: number) => (
+            <div
+              key={i}
+              className="flex items-center justify-between p-4 rounded-lg  border border-gray-200"
+            >
+              <p className="text-sm text-gray-700">{a.title}</p>
+              <span className="text-xs text-gray-400 whitespace-nowrap ml-4">
+                {a.createdAt}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
-  </div>
-);
+  ))
+};
 
 export default MemberOverviewTab;

@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { Button, Drawer } from "antd";
 import alpha from "@/assets/image 2.png";
-import { isUserLoggedIn } from "@/services/auth.service";
+import { getUserInfo, isUserLoggedIn } from "@/services/auth.service";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -21,8 +21,9 @@ const navLinks = [
 const Navbar = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-
   const isLogin = isUserLoggedIn();
+
+  const userInfo = getUserInfo();
 
   return (
     <header className="bg-[#0c1223] sticky top-0 z-50">
@@ -65,40 +66,34 @@ const Navbar = () => {
 
           {/* Auth Buttons */}
           <div className="hidden sm:flex items-center gap-3">
-            <Link
-              href={`${isLogin ? "/partner-dashboard" : "/partners#partner-login"}`}
-              className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-transparent px-4 py-3 text-sm font-medium text-[#D7A859] group"
-            >
-              {/* Sliding background */}
-              <span className="absolute inset-0 bg-[#D7A859] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
+            {
+              (userInfo as any)?.role !== "user" && <Link
+                href={`${isLogin ? "/partner-dashboard" : "/partners#partner-login"}`}
+                className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-transparent px-4 py-3 text-sm font-medium text-[#D7A859] group"
+              >
+                {/* Sliding background */}
+                <span className="absolute inset-0 bg-[#D7A859] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
 
-              {/* Text */}
-              <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
-                {isLogin ? "Dashboard" : "Partner Login"}
-              </span>
-            </Link>
-            <Link
-              href="/membership-application#member-login"
-              className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-[#D7A859] px-4 py-3 text-sm font-medium text-[#050507] group"
-            >
-              {/* Sliding background */}
-              <span className="absolute inset-0 bg-[#0c1223] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
+                {/* Text */}
+                <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
+                  {isLogin ? "Partner Dashboard" : "Partner Login"}
+                </span>
+              </Link>
+            }
+            {
+              (userInfo as any)?.role !== "partner" && <Link
+                href={`${isLogin ? "/member" : "/membership-application#member-login"}`}
+                className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-[#D7A859] px-4 py-3 text-sm font-medium text-[#050507] group"
+              >
+                {/* Sliding background */}
+                <span className="absolute inset-0 bg-[#0c1223] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
 
-              {/* Text */}
-              <span className="relative z-10 text-[#050507] transition-colors duration-300 group-hover:text-[#D7A859]">
-                Member Login
-              </span>
-            </Link>
-            {/* <Link
-              href="/membership-application"
-              className="relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-[#D7A859] px-4 py-3 text-sm font-medium text-[#050507] group"
-            >
-              <span className="absolute inset-0 bg-[#0c1223] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
-
-              <span className="relative z-10 text-[#050507] transition-colors duration-300 group-hover:text-[#D7A859]">
-                Apply Here
-              </span>
-            </Link> */}
+                {/* Text */}
+                <span className="relative z-10 text-[#050507] transition-colors duration-300 group-hover:text-[#D7A859]">
+                  {isLogin ? "Member Dashboard" : "Member Login"}
+                </span>
+              </Link>
+            }
           </div>
 
           <button
@@ -156,56 +151,36 @@ const Navbar = () => {
               ))}
 
               <div className="mt-4 flex flex-col gap-3">
-                <Link
-                  href={`${isLogin ? "/partner-dashboard" : "/partners#partner-login"}`}
-                  className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-transparent px-4 py-3 text-sm font-medium text-[#D7A859] group"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span className="absolute inset-0 bg-[#D7A859] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
-                  <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
-                    {isLogin ? "Dashboard" : "Partner Login"}
-                  </span>
-                </Link>
-                <Link
-                  href="/membership-application#member-login"
-                  className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md 
-             border border-[#D7A859]! bg-[#D7A859]! px-4 py-3 text-sm font-medium 
-             text-[#050507]! group"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span
-                    className="absolute inset-0 bg-[#D7A859]! scale-x-100 origin-right 
-               transition-transform duration-300 ease-out 
-               group-hover:scale-x-0"
-                  ></span>
-
-                  <span
-                    className="relative z-10 text-[#050507]! transition-colors duration-300 
-               group-hover:text-[#050507]!"
+                {(userInfo as any)?.role !== "user" && (
+                  <Link
+                    href={`${isLogin ? "/partner-dashboard" : "/partners#partner-login"}`}
+                    className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md border border-[#D7A859] bg-transparent px-4 py-3 text-sm font-medium text-[#D7A859] group"
+                    onClick={() => setIsOpen(false)}
                   >
-                    Member Login
-                  </span>
-                </Link>
-                {/* <Link
-                  href="/partner-login"
-                  className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md 
-             border border-[#D7A859]! bg-[#D7A859]! px-4 py-3 text-sm font-medium 
-             text-[#050507]! group"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span
-                    className="absolute inset-0 bg-[#D7A859]! scale-x-100 origin-right 
-               transition-transform duration-300 ease-out 
-               group-hover:scale-x-0"
-                  ></span>
+                    <span className="absolute inset-0 bg-[#D7A859] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></span>
+                    <span className="relative z-10 text-[#D7A859] transition-colors duration-300 group-hover:text-[#050507]">
+                      {isLogin ? "Partner Dashboard" : "Partner Login"}
+                    </span>
+                  </Link>
+                )}
 
-                  <span
-                    className="relative z-10 text-[#050507]! transition-colors duration-300 
-               group-hover:text-[#050507]!"
+                {(userInfo as any)?.role !== "partner" && (
+                  <Link
+                    href={`${isLogin ? "/member" : "/membership-application#member-login"}`}
+                    className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md border border-[#D7A859]! bg-[#D7A859]! px-4 py-3 text-sm font-medium text-[#050507]! group"
+                    onClick={() => setIsOpen(false)}
                   >
-                    Apply Here
-                  </span>
-                </Link> */}
+                    <span
+                      className="absolute inset-0 bg-[#D7A859]! scale-x-100 origin-right transition-transform duration-300 ease-out group-hover:scale-x-0"
+                    ></span>
+
+                    <span
+                      className="relative z-10 text-[#050507]! transition-colors duration-300 group-hover:text-[#050507]!"
+                    >
+                      {isLogin ? "Member Dashboard" : "Member Login"}
+                    </span>
+                  </Link>
+                )}
               </div>
             </div>
           </Drawer>

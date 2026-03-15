@@ -168,6 +168,9 @@ import {
   Megaphone,
   Menu,
 } from "lucide-react";
+import { authKey } from "@/constants/storageKey";
+import { removeAccessTokenToCookie } from "@/services/removeTokeknFromCookie";
+import { Button } from "antd";
 
 const tabs = [
   { key: "", label: "Dashboard", icon: LayoutDashboard },
@@ -189,6 +192,11 @@ export default function MemberLayout({
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+
+  const logout = async () => {
+    sessionStorage.removeItem(authKey);
+    await removeAccessTokenToCookie({ redirect: "/" });
+  }
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col overflow-x-hidden">
       {/* Header */}
@@ -206,18 +214,19 @@ export default function MemberLayout({
               <User className="w-5 h-5 text-amber" />
             </div>
 
-            <div>
+            <Link href="/">
               <p className="text-base font-bold text-gray-900">Member Portal</p>
               <p className="text-xs text-gray-500">Welcome back, John</p>
-            </div>
+            </Link>
           </div>
 
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-sm text-amber border border-amber/40 rounded-md px-4 py-2 hover:bg-amber/10"
+          <button
+            onClick={logout}
+            className="flex! items-center! gap-2! text-sm! cursor-pointer! text-yellow-600! border! border-yellow-500/40! rounded-md! px-4! py-2! hover:bg-yellow-50! transition!"
           >
-            <LogOut className="w-4 h-4" /> Logout
-          </Link>
+            <LogOut className="w-4 h-4" />
+            Logout
+          </button>
         </div>
       </header>
 
@@ -233,9 +242,8 @@ export default function MemberLayout({
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <aside
-          className={`border-r border-gray-200 bg-white transition-all duration-300 overflow-y-auto ${
-            sidebarOpen ? "w-56" : "w-14"
-          }`}
+          className={`border-r border-gray-200 bg-white transition-all duration-300 overflow-y-auto ${sidebarOpen ? "w-56" : "w-14"
+            }`}
         >
           <nav className="flex flex-col gap-1 p-2 mt-2">
             {tabs.map((tab) => {
@@ -248,19 +256,17 @@ export default function MemberLayout({
                   key={tab.label}
                   href={href}
                   title={tab.label}
-                  className={`flex items-center gap-3 rounded-md text-sm font-medium transition-colors ${
-                    sidebarOpen ? "px-3 py-2.5" : "px-0 py-2.5 justify-center"
-                  } ${
-                    isActive
+                  className={`flex items-center gap-3 rounded-md text-sm font-medium transition-colors ${sidebarOpen ? "px-3 py-2.5" : "px-0 py-2.5 justify-center"
+                    } ${isActive
                       ? "text-black"
                       : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                  }`}
+                    }`}
                   style={
                     isActive
                       ? {
-                          background:
-                            "linear-gradient(180deg, #FCEFAE 0%, #DFBB0B 100%)",
-                        }
+                        background:
+                          "linear-gradient(180deg, #FCEFAE 0%, #DFBB0B 100%)",
+                      }
                       : undefined
                   }
                 >
