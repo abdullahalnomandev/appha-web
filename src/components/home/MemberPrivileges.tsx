@@ -115,7 +115,7 @@ const MemberBenefits = () => {
                 {/* Content */}
                 <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                   {/* Icon */}
-                  <div className="text-3xl mb-3">{card.icon}</div>
+                  {/* <div className="text-3xl mb-3">{card.icon}</div> */}
 
                   {/* Title */}
                   <h3

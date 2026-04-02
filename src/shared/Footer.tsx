@@ -129,10 +129,10 @@ const Footer = () => {
                     strokeWidth={1.5}
                   />
                   <a
-                    href="mailto:admin@alphaclubuae.com"
+                    href="mailto:info@alphaclubuae.com"
                     className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
-                    admin@alphaclubuae.com
+                    info@alphaclubuae.com
                   </a>
                 </li>
                 <li className="flex items-center gap-2">
