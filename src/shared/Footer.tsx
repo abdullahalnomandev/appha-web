@@ -129,10 +129,10 @@ const Footer = () => {
                     strokeWidth={1.5}
                   />
                   <a
-                    href="mailto:info@alphaclub.ae"
+                    href="mailto:admin@alphaclubuae.com"
                     className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
-                    Info@alphaclub.ae
+                    admin@alphaclubuae.com
                   </a>
                 </li>
                 <li className="flex items-center gap-2">
@@ -141,10 +141,10 @@ const Footer = () => {
                     strokeWidth={1.5}
                   />
                   <a
-                    href="tel:+971XXXXXXXXX"
+                    href="tel:+971552886136"
                     className="text-sm leading-6 text-[#FEFEFE] hover:text-[#FE9800] transition-colors"
                   >
-                    +971 XXX XXX XXXX
+                    +971 552886136 
                   </a>
                 </li>
                 <li className="flex items-start gap-2">
